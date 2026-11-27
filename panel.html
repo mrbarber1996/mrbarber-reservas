@@ -9,51 +9,40 @@
 
 <style>
 *{box-sizing:border-box}
-
 body{
  margin:0;
  background:#f5efe6;
  color:#211e1a;
  font-family:Arial,sans-serif;
 }
-
 header{
  text-align:center;
  padding:25px;
  border-bottom:1px solid #cbbba6;
 }
-
-.logo{
- width:210px;
- max-width:90%;
-}
-
+.logo{width:210px;max-width:90%}
 main{
  width:100%;
- max-width:900px;
+ max-width:1100px;
  margin:auto;
- padding:20px;
+ padding:16px;
 }
-
-h1,h2{
+h1,h2,h3{
  font-family:Georgia,serif;
  font-weight:normal;
  color:#59382f;
 }
-
 .subtitulo{
  font-size:12px;
  letter-spacing:2px;
  color:#8b6848;
 }
-
 .resumen,.horarios{
  display:grid;
  grid-template-columns:repeat(2,minmax(0,1fr));
  gap:12px;
  margin:20px 0;
 }
-
 .tarjeta{
  background:#fffdf9;
  border:1px solid #d8cbbb;
@@ -61,21 +50,18 @@ h1,h2{
  padding:18px;
  min-width:0;
 }
-
 .numero{
  font-size:28px;
  font-weight:bold;
  color:#59382f;
  margin-top:10px;
 }
-
 label{
  display:block;
  font-size:12px;
  font-weight:bold;
  margin:15px 0 8px;
 }
-
 input,select{
  display:block;
  width:100%;
@@ -88,100 +74,191 @@ input,select{
  background:#fffdf9;
  color:#211e1a;
 }
-
 input[type=date],input[type=time]{
  -webkit-appearance:none;
  appearance:none;
  min-height:48px;
 }
-
 button{
- padding:14px 18px;
+ padding:13px;
  border:0;
  border-radius:8px;
  background:#211e1a;
  color:white;
  cursor:pointer;
- font-size:14px;
+ font-size:13px;
 }
-
 button:disabled{opacity:.5}
-
-.completo{
- width:100%;
- margin-top:20px;
-}
-
+.completo{width:100%;margin-top:20px}
 .secundario{
  background:transparent;
  border:1px solid #8b6848;
  color:#59382f;
 }
-
+.cancelar{
+ background:transparent;
+ border:1px solid #a65c50;
+ color:#a65c50;
+ margin-top:12px;
+}
 .cita{
  background:#fffdf9;
  border:1px solid #d8cbbb;
  border-left:5px solid #8b6848;
  border-radius:10px;
- padding:18px;
+ padding:16px;
  margin-bottom:12px;
  overflow-wrap:anywhere;
 }
-
 .hora{
- font-size:23px;
+ font-size:21px;
  font-weight:bold;
  color:#59382f;
 }
-
 .etiqueta{
  font-size:12px;
  border-radius:20px;
  padding:6px 10px;
  display:inline-block;
 }
-
 .confirmed{
- background:#e1eadc;
+ background:#dce8d5;
  color:#36533a;
 }
-
 .pending{
  background:#f4e5c9;
  color:#795333;
 }
-
 .cancelled{
- background:#eee5df;
- color:#805c50;
+ background:#e5e5e5;
+ color:#666;
 }
-
+.descanso{
+ background:#e7d2bd;
+ color:#59382f;
+}
 nav{
  display:flex;
- gap:10px;
+ gap:6px;
  margin:25px 0;
 }
-
 nav button{
  flex:1;
+ min-width:0;
+ padding:14px 5px;
  background:#e7dbca;
  color:#59382f;
 }
-
 nav button.activo{
  background:#211e1a;
  color:white;
 }
-
+.navegacion{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:8px;
+ margin:20px 0;
+}
+.navegacion strong{
+ text-align:center;
+ font-size:14px;
+}
+.leyenda{
+ display:flex;
+ flex-wrap:wrap;
+ gap:8px;
+ margin:15px 0;
+}
+.calendarioExterior{
+ overflow-x:auto;
+ border:1px solid #d8cbbb;
+ border-radius:10px;
+ background:#fffdf9;
+}
+.calendario{
+ display:grid;
+ grid-template-columns:55px repeat(6,minmax(115px,1fr));
+ min-width:745px;
+}
+.cabeceraDia{
+ padding:12px 4px;
+ text-align:center;
+ border-bottom:1px solid #d8cbbb;
+ border-right:1px solid #d8cbbb;
+ font-size:12px;
+ font-weight:bold;
+}
+.columnaHoras,.columnaDia{
+ position:relative;
+ height:660px;
+ border-right:1px solid #d8cbbb;
+}
+.columnaDia{
+ background:repeating-linear-gradient(
+ to bottom,
+ transparent 0px,
+ transparent 29px,
+ #eee5da 29px,
+ #eee5da 30px
+ );
+}
+.marcaHora{
+ position:absolute;
+ width:100%;
+ text-align:center;
+ font-size:10px;
+ color:#8b6848;
+}
+.evento{
+ position:absolute;
+ border-radius:5px;
+ padding:3px 4px;
+ overflow:hidden;
+ font-size:10px;
+ line-height:12px;
+ text-align:left;
+ border:1px solid rgba(0,0,0,.08);
+}
+.evento strong{
+ display:block;
+ white-space:nowrap;
+ overflow:hidden;
+ text-overflow:ellipsis;
+}
+.evento span{
+ display:block;
+ white-space:nowrap;
+ overflow:hidden;
+ text-overflow:ellipsis;
+}
+.cerrado{
+ position:absolute;
+ left:0;
+ right:0;
+ background:rgba(180,170,160,.2);
+ pointer-events:none;
+}
+dialog{
+ width:calc(100% - 32px);
+ max-width:420px;
+ max-height:85vh;
+ overflow:auto;
+ border:1px solid #d8cbbb;
+ border-radius:14px;
+ background:#fffdf9;
+ color:#211e1a;
+ padding:22px;
+}
+dialog::backdrop{
+ background:rgba(0,0,0,.45);
+}
 p{line-height:1.5}
-
 .mensaje{
  color:#8b6848;
  font-size:14px;
 }
-
 [hidden]{display:none!important}
-
 footer{
  text-align:center;
  padding:30px;
@@ -194,14 +271,9 @@ footer{
 <body>
 
 <header>
-
-<img src="./logo-mrbarber.png"
- class="logo" alt="MRBARBER">
-
+<img src="./logo-mrbarber.png" class="logo" alt="MRBARBER">
 <p class="subtitulo">GESTIÓN PRIVADA</p>
-
 <button id="salir">Cerrar sesión</button>
-
 </header>
 
 <main id="contenido" hidden>
@@ -210,29 +282,21 @@ footer{
 <p id="rol"></p>
 
 <div class="resumen" id="resumen">
-
 <div class="tarjeta">
-Citas activas
+Citas activas del día
 <div class="numero" id="totalCitas">0</div>
 </div>
 
 <div class="tarjeta" id="tarjetaIngresos" hidden>
-Valor de reservas
+Valor de reservas del día
 <div class="numero" id="ingresos">$0</div>
 </div>
-
 </div>
 
 <nav>
-
-<button id="tabAgenda" class="activo">
-Mi agenda
-</button>
-
-<button id="tabDescansos">
-Descansos
-</button>
-
+<button id="tabAgenda" class="activo">Agenda diaria</button>
+<button id="tabSemana">Semanal</button>
+<button id="tabDescansos">Descansos</button>
 </nav>
 
 <section id="agenda">
@@ -243,18 +307,50 @@ Descansos
 <input type="date" id="fecha">
 
 <div id="filtroBarbero" hidden>
-
 <label for="barbero">BARBERO</label>
-
 <select id="barbero">
 <option value="">Todos los barberos</option>
 </select>
-
 </div>
 
 <p id="mensaje" class="mensaje" role="status"></p>
-
 <div id="citas"></div>
+
+</section>
+
+<section id="semana" hidden>
+
+<h2>Agenda semanal</h2>
+
+<div id="selectorSemana" hidden>
+<label for="barberoSemana">BARBERO</label>
+<select id="barberoSemana"></select>
+</div>
+
+<div class="navegacion">
+<button id="anterior" aria-label="Semana anterior">‹</button>
+<strong id="rangoSemana"></strong>
+<button id="siguiente" aria-label="Semana siguiente">›</button>
+</div>
+
+<button id="semanaActual" class="secundario">Semana actual</button>
+
+<div class="leyenda">
+<span class="etiqueta confirmed">Confirmada</span>
+<span class="etiqueta pending">Pendiente</span>
+<span class="etiqueta descanso">Descanso</span>
+<span class="etiqueta cancelled">Cancelada</span>
+</div>
+
+<p class="mensaje">
+Desliza hacia los lados para ver todos los días. Toca una cita para ver sus detalles.
+</p>
+
+<p id="mensajeSemana" class="mensaje" role="status"></p>
+
+<div class="calendarioExterior">
+<div id="calendario" class="calendario"></div>
+</div>
 
 </section>
 
@@ -267,34 +363,23 @@ Descansos
 <form id="formBloqueo" class="tarjeta">
 
 <div id="selectorBloqueo" hidden>
-
 <label for="barberoBloqueo">BARBERO</label>
 <select id="barberoBloqueo"></select>
-
 </div>
 
 <label for="fechaBloqueo">FECHA</label>
-
 <input type="date" id="fechaBloqueo" required>
 
 <div class="horarios">
 
 <div>
-
 <label for="desde">DESDE</label>
-
-<input type="time" id="desde"
- value="13:00" required>
-
+<input type="time" id="desde" value="13:00" required>
 </div>
 
 <div>
-
 <label for="hasta">HASTA</label>
-
-<input type="time" id="hasta"
- value="14:00" required>
-
+<input type="time" id="hasta" value="14:00" required>
 </div>
 
 </div>
@@ -309,35 +394,34 @@ Descansos
 <option>Otro</option>
 </select>
 
-<button class="completo"
- id="guardarBloqueo" type="submit">
-
+<button class="completo" id="guardarBloqueo" type="submit">
 BLOQUEAR HORARIO
-
 </button>
 
-<p id="mensajeBloqueo"
- class="mensaje" role="status"></p>
+<p id="mensajeBloqueo" class="mensaje" role="status"></p>
 
 </form>
 
 <h2>Próximos bloqueos</h2>
 
 <p id="estadoBloqueos" class="mensaje"></p>
-
 <div id="bloqueos"></div>
 
 </section>
 
 </main>
 
+<dialog id="detalle">
+<h2>Detalle del horario</h2>
+<div id="detalleContenido"></div>
+<button id="cerrarDetalle" class="completo">Cerrar</button>
+</dialog>
+
 <p id="acceso" style="text-align:center">
 Comprobando acceso...
 </p>
 
-<footer>
-MRBARBER 1996 · Sistema de gestión
-</footer>
+<footer>MRBARBER 1996 · Sistema de gestión</footer>
 
 <script type="module">
 
@@ -355,16 +439,20 @@ let administrador = false;
 let perfil = null;
 let equipo = [];
 let servicios = [];
+let lunes = '';
 let solicitud = 0;
+let solicitudSemana = 0;
 let solicitudBloqueos = 0;
+
+const camposCita =
+'id,barber_id,service_id,customer_name,customer_phone,start_at,end_at,status';
 
 const moneda = new Intl.NumberFormat('es-CL',{
  style:'currency',
  currency:'CLP'
 });
 
-const formatoChile = new Intl.DateTimeFormat(
- 'en-CA',{
+const formatoChile = new Intl.DateTimeFormat('en-CA',{
  timeZone:'America/Santiago',
  year:'numeric',
  month:'2-digit',
@@ -376,41 +464,30 @@ const formatoChile = new Intl.DateTimeFormat(
 });
 
 function partesChile(d){
-
  return Object.fromEntries(
-  formatoChile.formatToParts(d)
-  .map(x=>[x.type,x.value])
+ formatoChile.formatToParts(new Date(d))
+ .map(x=>[x.type,x.value])
  );
-
 }
 
 function fechaChile(d){
-
  const p = partesChile(d);
-
  return `${p.year}-${p.month}-${p.day}`;
-
 }
 
 function horaChile(d){
-
- const p = partesChile(new Date(d));
-
+ const p = partesChile(d);
  return `${p.hour}:${p.minute}`;
-
 }
 
 function fechaHoraChile(fecha,hora){
 
- const objetivo = Date.parse(
-  fecha+'T'+hora+':00Z'
- );
-
+ const objetivo = Date.parse(fecha+'T'+hora+':00Z');
  let instante = objetivo;
 
  for(let i=0;i<4;i++){
 
-  const p = partesChile(new Date(instante));
+  const p = partesChile(instante);
 
   const local = Date.parse(
    `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}:${p.second}Z`
@@ -424,23 +501,45 @@ function fechaHoraChile(fecha,hora){
 
  }
 
- const resultado = new Date(instante);
-
- if(fechaChile(resultado)!==fecha ||
-    horaChile(resultado)!==hora){
-
+ if(fechaChile(instante)!==fecha ||
+ horaChile(instante)!==hora){
   throw new Error('Horario local no válido.');
-
  }
 
- return resultado.toISOString();
+ return new Date(instante).toISOString();
+
+}
+
+function sumarDias(fecha,dias){
+
+ const d = new Date(fecha+'T12:00:00Z');
+ d.setUTCDate(d.getUTCDate()+dias);
+
+ return d.toISOString().slice(0,10);
+
+}
+
+function obtenerLunes(fecha){
+
+ const d = new Date(fecha+'T12:00:00Z');
+
+ return sumarDias(
+  fecha,-((d.getUTCDay()+6)%7)
+ );
+
+}
+
+function fechaCorta(fecha){
+
+ const [a,m,d] = fecha.split('-');
+
+ return d+'/'+m;
 
 }
 
 function agregarTexto(contenedor,texto,clase){
 
  const p = document.createElement('p');
-
  p.textContent = texto;
 
  if(clase) p.className = clase;
@@ -451,8 +550,23 @@ function agregarTexto(contenedor,texto,clase){
 
 function nombreBarbero(id){
 
- return equipo.find(b=>b.id===id)?.name
- || 'Barbero';
+ return equipo.find(b=>b.id===id)?.name || 'Barbero';
+
+}
+
+function servicioCita(c){
+
+ return servicios.find(s=>s.id===c.service_id);
+
+}
+
+function estadoCita(estado){
+
+ return ({
+ confirmed:'Confirmada',
+ pending:'Pendiente',
+ cancelled:'Cancelada'
+ })[estado] || estado;
 
 }
 
@@ -463,38 +577,31 @@ async function iniciar(){
   const {data,error} = await supabase.auth.getUser();
 
   if(error || !data.user){
-
    location.replace('./login.html');
    return;
-
   }
 
-  const resultadoAdmin =
-   await supabase.rpc('is_admin');
+  const admin = await supabase.rpc('is_admin');
 
-  if(resultadoAdmin.error)
-   throw resultadoAdmin.error;
+  if(admin.error) throw admin.error;
 
-  administrador = resultadoAdmin.data===true;
+  administrador = admin.data===true;
 
-  const resultadoEquipo = await supabase
+  const barberos = await supabase
    .from('barbers')
    .select('id,name,user_id,active')
    .eq('active',true);
 
-  if(resultadoEquipo.error)
-   throw resultadoEquipo.error;
+  if(barberos.error) throw barberos.error;
 
-  equipo = resultadoEquipo.data;
+  equipo = barberos.data;
 
   perfil = equipo.find(
    b=>b.user_id===data.user.id
   );
 
   if(!administrador && !perfil){
-
    throw new Error('Cuenta sin acceso al equipo.');
-
   }
 
   const resultadoServicios = await supabase
@@ -513,49 +620,50 @@ async function iniciar(){
    ? 'Administrador MRBARBER'
    : 'Panel personal de barbero';
 
-  el('tarjetaIngresos').hidden = !administrador;
-
-  el('filtroBarbero').hidden = !administrador;
-
-  el('selectorBloqueo').hidden = !administrador;
+  ['tarjetaIngresos','filtroBarbero',
+   'selectorSemana','selectorBloqueo']
+   .forEach(id=>{
+    el(id).hidden = !administrador;
+   });
 
   if(administrador){
 
    equipo.forEach(b=>{
 
-    ['barbero','barberoBloqueo'].forEach(id=>{
+    ['barbero','barberoSemana','barberoBloqueo']
+    .forEach(id=>{
 
-     const opcion =
-      document.createElement('option');
-
+     const opcion = document.createElement('option');
      opcion.value = b.id;
      opcion.textContent = b.name;
-
      el(id).appendChild(opcion);
 
     });
 
    });
 
-   if(perfil)
+   if(perfil){
+
+    el('barberoSemana').value = perfil.id;
     el('barberoBloqueo').value = perfil.id;
+
+   }
 
   }else{
 
-   el('resumen').style.gridTemplateColumns = '1fr';
+   el('resumen').style.gridTemplateColumns='1fr';
 
   }
 
   const hoy = fechaChile(new Date());
 
   el('fecha').value = hoy;
-
   el('fechaBloqueo').value = hoy;
-
   el('fechaBloqueo').min = hoy;
 
-  el('acceso').hidden = true;
+  lunes = obtenerLunes(hoy);
 
+  el('acceso').hidden = true;
   el('contenido').hidden = false;
 
   await cargarCitas();
@@ -569,16 +677,112 @@ async function iniciar(){
 
 }
 
+function botonCancelar(c){
+
+ const boton = document.createElement('button');
+
+ boton.className = 'cancelar';
+ boton.textContent = 'Cancelar cita';
+
+ boton.onclick = async()=>{
+
+  if(!confirm(
+   '¿Cancelar la cita de '+c.customer_name+'?'
+  )) return;
+
+  boton.disabled = true;
+
+  try{
+
+   const {data,error} = await supabase.rpc(
+    'admin_cancel_booking',{
+     p_appointment_id:c.id
+    }
+   );
+
+   if(error) throw error;
+
+   if(data!==true){
+    throw new Error('La cita ya no está activa.');
+   }
+
+   if(el('detalle').open)
+    el('detalle').close();
+
+   await cargarCitas();
+
+   if(!el('semana').hidden)
+    await cargarSemana();
+
+   alert('Cita cancelada correctamente.');
+
+  }catch(error){
+
+   alert(error.message);
+   boton.disabled = false;
+
+  }
+
+ };
+
+ return boton;
+
+}
+
+function mostrarCita(contenedor,c){
+
+ const servicio = servicioCita(c);
+
+ agregarTexto(
+  contenedor,
+  horaChile(c.start_at)+' – '+horaChile(c.end_at),
+  'hora'
+ );
+
+ agregarTexto(contenedor,c.customer_name);
+
+ agregarTexto(
+  contenedor,servicio?.name || 'Servicio'
+ );
+
+ agregarTexto(
+  contenedor,'Barbero: '+nombreBarbero(c.barber_id)
+ );
+
+ agregarTexto(
+  contenedor,'WhatsApp: '+c.customer_phone
+ );
+
+ if(administrador){
+
+  agregarTexto(
+   contenedor,moneda.format(servicio?.price||0)
+  );
+
+ }
+
+ agregarTexto(
+  contenedor,
+  estadoCita(c.status),
+  'etiqueta '+c.status
+ );
+
+ if(administrador &&
+ ['confirmed','pending'].includes(c.status)){
+
+  contenedor.appendChild(botonCancelar(c));
+
+ }
+
+}
+
 async function cargarCitas(){
 
  const actual = ++solicitud;
 
- el('mensaje').textContent = 'Cargando agenda...';
-
  el('citas').replaceChildren();
-
+ el('mensaje').textContent = 'Cargando agenda...';
  el('totalCitas').textContent = '—';
-
  el('ingresos').textContent = '—';
 
  try{
@@ -587,26 +791,18 @@ async function cargarCitas(){
 
   if(!fecha){
 
-   el('mensaje').textContent = 'Selecciona una fecha.';
+   el('mensaje').textContent='Selecciona una fecha.';
    return;
 
   }
 
-  const base = new Date(fecha+'T00:00:00Z');
-
-  const desde = new Date(
-   base.getTime()-86400000
-  ).toISOString();
-
-  const hasta = new Date(
-   base.getTime()+172800000
-  ).toISOString();
-
   let consulta = supabase
    .from('appointments')
-   .select('id,barber_id,service_id,customer_name,customer_phone,start_at,end_at,status')
-   .gte('start_at',desde)
-   .lt('start_at',hasta)
+   .select(camposCita)
+   .gte('start_at',fechaHoraChile(fecha,'00:00'))
+   .lt('start_at',fechaHoraChile(
+    sumarDias(fecha,1),'00:00'
+   ))
    .order('start_at');
 
   if(!administrador){
@@ -624,14 +820,9 @@ async function cargarCitas(){
   const {data,error} = await consulta;
 
   if(actual!==solicitud) return;
-
   if(error) throw error;
 
-  const citas = data.filter(
-   c=>fechaChile(new Date(c.start_at))===fecha
-  );
-
-  const activas = citas.filter(
+  const activas = data.filter(
    c=>['confirmed','pending'].includes(c.status)
   );
 
@@ -639,69 +830,24 @@ async function cargarCitas(){
 
   if(administrador){
 
-   const total = activas.reduce((s,c)=>
-
-    s+Number(servicios.find(
-     x=>x.id===c.service_id
-    )?.price||0),0
-
+   const total = activas.reduce(
+    (s,c)=>s+Number(servicioCita(c)?.price||0),0
    );
 
-   el('ingresos').textContent =
-    moneda.format(total);
+   el('ingresos').textContent = moneda.format(total);
 
   }
 
-  el('mensaje').textContent = citas.length
-   ? citas.length+' reservas registradas.'
+  el('mensaje').textContent = data.length
+   ? data.length+' reservas registradas.'
    : 'No hay reservas para esta fecha.';
 
-  citas.forEach(c=>{
+  data.forEach(c=>{
 
    const tarjeta = document.createElement('div');
-
    tarjeta.className = 'cita';
 
-   agregarTexto(tarjeta,
-
-    horaChile(c.start_at)+' – '+horaChile(c.end_at),
-
-    'hora'
-
-   );
-
-   agregarTexto(tarjeta,c.customer_name);
-
-   agregarTexto(tarjeta,
-
-    servicios.find(s=>s.id===c.service_id)?.name
-    || 'Servicio'
-
-   );
-
-   agregarTexto(tarjeta,
-    'Barbero: '+nombreBarbero(c.barber_id)
-   );
-
-   agregarTexto(tarjeta,
-    'WhatsApp: '+c.customer_phone
-   );
-
-   const estados = {
-
-    confirmed:'Confirmada',
-    pending:'Pendiente',
-    cancelled:'Cancelada'
-
-   };
-
-   agregarTexto(tarjeta,
-
-    estados[c.status]||c.status,
-
-    'etiqueta '+c.status
-
-   );
+   mostrarCita(tarjeta,c);
 
    el('citas').appendChild(tarjeta);
 
@@ -712,7 +858,271 @@ async function cargarCitas(){
   if(actual!==solicitud) return;
 
   el('mensaje').textContent =
-   'Error al cargar agenda: '+error.message;
+   'Error: '+error.message;
+
+ }
+
+}
+
+function abrirDetalle(c,tipo){
+
+ el('detalleContenido').replaceChildren();
+
+ if(tipo==='cita'){
+
+  mostrarCita(el('detalleContenido'),c);
+
+ }else{
+
+  agregarTexto(
+   el('detalleContenido'),
+   horaChile(c.start_at)+' – '+horaChile(c.end_at),
+   'hora'
+  );
+
+  agregarTexto(
+   el('detalleContenido'),c.reason||'Descanso'
+  );
+
+  agregarTexto(
+   el('detalleContenido'),
+   nombreBarbero(c.barber_id)
+  );
+
+ }
+
+ if(!el('detalle').open)
+  el('detalle').showModal();
+
+}
+
+function dibujarSemana(inicio,citas,bloqueos){
+
+ const calendario = el('calendario');
+
+ calendario.replaceChildren();
+
+ const dias = ['Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+ const fechas = dias.map(
+  (_,i)=>sumarDias(inicio,i)
+ );
+
+ const esquina = document.createElement('div');
+ esquina.className = 'cabeceraDia';
+ esquina.textContent = 'Hora';
+
+ calendario.appendChild(esquina);
+
+ fechas.forEach((fecha,i)=>{
+
+  const cabecera = document.createElement('div');
+
+  cabecera.className = 'cabeceraDia';
+  cabecera.textContent = dias[i]+' '+fechaCorta(fecha);
+
+  calendario.appendChild(cabecera);
+
+ });
+
+ const horas = document.createElement('div');
+ horas.className = 'columnaHoras';
+
+ for(let h=9;h<20;h++){
+
+  const marca = document.createElement('div');
+
+  marca.className = 'marcaHora';
+  marca.style.top = ((h-9)*60)+'px';
+  marca.textContent = String(h).padStart(2,'0')+':00';
+
+  horas.appendChild(marca);
+
+ }
+
+ calendario.appendChild(horas);
+
+ fechas.forEach((fecha,i)=>{
+
+  const columna = document.createElement('div');
+  columna.className = 'columnaDia';
+
+  const apertura = document.createElement('div');
+  apertura.className = 'cerrado';
+  apertura.style.top = '0px';
+  apertura.style.height = i===5?'0px':'60px';
+
+  columna.appendChild(apertura);
+
+  if(i===5){
+
+   const cierre = document.createElement('div');
+
+   cierre.className = 'cerrado';
+   cierre.style.top = '540px';
+   cierre.style.height = '120px';
+
+   columna.appendChild(cierre);
+
+  }
+
+  const eventos = [
+   ...citas.map(c=>({...c,tipo:'cita'})),
+   ...bloqueos.map(c=>({...c,tipo:'bloqueo'}))
+  ];
+
+  const diaInicio = new Date(
+   fechaHoraChile(fecha,'09:00')
+  ).getTime();
+
+  const diaFin = new Date(
+   fechaHoraChile(fecha,'20:00')
+  ).getTime();
+
+  const visibles = eventos.filter(c=>
+   new Date(c.start_at).getTime()<diaFin &&
+   new Date(c.end_at).getTime()>diaInicio
+  ).map(c=>({
+
+   ...c,
+   inicioVisible:Math.max(
+    new Date(c.start_at).getTime(),diaInicio
+   ),
+   finVisible:Math.min(
+    new Date(c.end_at).getTime(),diaFin
+   )
+
+  })).sort((a,b)=>
+   a.inicioVisible-b.inicioVisible
+  );
+
+  const carriles = [];
+
+  visibles.forEach(c=>{
+
+   let carril = carriles.findIndex(
+    fin=>fin<=c.inicioVisible
+   );
+
+   if(carril===-1) carril=carriles.length;
+
+   carriles[carril]=c.finVisible;
+   c.carril=carril;
+
+  });
+
+  const cantidad = Math.max(carriles.length,1);
+
+  visibles.forEach(c=>{
+
+   const superior =
+    (c.inicioVisible-diaInicio)/60000;
+
+   const altura =
+    (c.finVisible-c.inicioVisible)/60000;
+
+   const evento = document.createElement('button');
+
+   evento.className = 'evento '+(
+    c.tipo==='bloqueo'?'descanso':c.status
+   );
+
+   evento.style.top = superior+'px';
+   evento.style.height = Math.max(altura,12)+'px';
+
+   evento.style.left =
+    (c.carril*100/cantidad)+'%';
+
+   evento.style.width =
+    (100/cantidad)+'%';
+
+   const nombre = document.createElement('strong');
+
+   nombre.textContent = c.tipo==='bloqueo'
+    ? c.reason||'Descanso'
+    : c.customer_name;
+
+   const detalle = document.createElement('span');
+
+   detalle.textContent = c.tipo==='bloqueo'
+    ? horaChile(c.start_at)
+    : servicioCita(c)?.name||'Cita';
+
+   evento.append(nombre,detalle);
+
+   evento.onclick = ()=>abrirDetalle(c,c.tipo);
+
+   columna.appendChild(evento);
+
+  });
+
+  calendario.appendChild(columna);
+
+ });
+
+}
+
+async function cargarSemana(){
+
+ const actual = ++solicitudSemana;
+ const inicio = lunes;
+
+ el('mensajeSemana').textContent = 'Cargando semana...';
+
+ el('calendario').replaceChildren();
+
+ el('rangoSemana').textContent =
+  fechaCorta(inicio)+' – '+
+  fechaCorta(sumarDias(inicio,5));
+
+ try{
+
+  const barberId = administrador
+   ? el('barberoSemana').value
+   : perfil.id;
+
+  const desde = fechaHoraChile(inicio,'00:00');
+
+  const hasta = fechaHoraChile(
+   sumarDias(inicio,6),'00:00'
+  );
+
+  const [citas,bloqueos] = await Promise.all([
+
+   supabase.from('appointments')
+    .select(camposCita)
+    .eq('barber_id',barberId)
+    .lt('start_at',hasta)
+    .gt('end_at',desde),
+
+   supabase.from('barber_blocks')
+    .select('id,barber_id,start_at,end_at,reason')
+    .eq('barber_id',barberId)
+    .lt('start_at',hasta)
+    .gt('end_at',desde)
+
+  ]);
+
+  if(actual!==solicitudSemana) return;
+
+  if(citas.error) throw citas.error;
+  if(bloqueos.error) throw bloqueos.error;
+
+  dibujarSemana(
+   inicio,citas.data,bloqueos.data
+  );
+
+  el('mensajeSemana').textContent =
+   nombreBarbero(barberId)+' · '+
+   citas.data.length+' reservas · '+
+   bloqueos.data.length+' descansos';
+
+ }catch(error){
+
+  if(actual!==solicitudSemana) return;
+
+  el('mensajeSemana').textContent =
+   'Error: '+error.message;
 
  }
 
@@ -745,7 +1155,6 @@ async function cargarBloqueos(){
    .order('start_at');
 
   if(actual!==solicitudBloqueos) return;
-
   if(error) throw error;
 
   el('estadoBloqueos').textContent = data.length
@@ -758,28 +1167,23 @@ async function cargarBloqueos(){
 
    tarjeta.className = 'cita';
 
-   agregarTexto(tarjeta,
-    fechaChile(new Date(b.start_at))
-   );
+   agregarTexto(tarjeta,fechaChile(b.start_at));
 
-   agregarTexto(tarjeta,
-
+   agregarTexto(
+    tarjeta,
     horaChile(b.start_at)+' – '+horaChile(b.end_at),
-
     'hora'
-
    );
 
    agregarTexto(tarjeta,b.reason||'Descanso');
 
-   agregarTexto(tarjeta,
-    'Barbero: '+nombreBarbero(b.barber_id)
+   agregarTexto(
+    tarjeta,'Barbero: '+nombreBarbero(b.barber_id)
    );
 
    const boton = document.createElement('button');
 
    boton.textContent = 'Eliminar bloqueo';
-
    boton.className = 'secundario';
 
    boton.onclick = async()=>{
@@ -801,15 +1205,13 @@ async function cargarBloqueos(){
      if(error) throw error;
 
      if(!data.length)
-
-      throw new Error('No se pudo eliminar el bloqueo.');
+      throw new Error('No se pudo eliminar.');
 
      await cargarBloqueos();
 
     }catch(error){
 
      alert(error.message);
-
      boton.disabled = false;
 
     }
@@ -817,7 +1219,6 @@ async function cargarBloqueos(){
    };
 
    tarjeta.appendChild(boton);
-
    el('bloqueos').appendChild(tarjeta);
 
   });
@@ -833,7 +1234,7 @@ async function cargarBloqueos(){
 
 }
 
-el('formBloqueo').addEventListener('submit',async e=>{
+el('formBloqueo').onsubmit = async e=>{
 
  e.preventDefault();
 
@@ -842,7 +1243,6 @@ el('formBloqueo').addEventListener('submit',async e=>{
  if(boton.disabled) return;
 
  boton.disabled = true;
-
  boton.textContent = 'GUARDANDO...';
 
  el('mensajeBloqueo').textContent = '';
@@ -920,56 +1320,81 @@ el('formBloqueo').addEventListener('submit',async e=>{
  }finally{
 
   boton.disabled = false;
-
   boton.textContent = 'BLOQUEAR HORARIO';
 
  }
 
-});
+};
 
-el('tabAgenda').onclick = ()=>{
+function cambiarPestana(nombre){
 
- el('agenda').hidden = false;
+ const pestanas = {
+  agenda:'tabAgenda',
+  semana:'tabSemana',
+  descansos:'tabDescansos'
+ };
 
- el('descansos').hidden = true;
+ Object.entries(pestanas).forEach(([seccion,tab])=>{
 
- el('tabAgenda').classList.add('activo');
+  el(seccion).hidden = seccion!==nombre;
 
- el('tabDescansos').classList.remove('activo');
+  el(tab).classList.toggle(
+   'activo',seccion===nombre
+  );
 
- cargarCitas();
+ });
+
+ if(nombre==='agenda') cargarCitas();
+ if(nombre==='semana') cargarSemana();
+ if(nombre==='descansos') cargarBloqueos();
+
+}
+
+el('tabAgenda').onclick =
+ ()=>cambiarPestana('agenda');
+
+el('tabSemana').onclick =
+ ()=>cambiarPestana('semana');
+
+el('tabDescansos').onclick =
+ ()=>cambiarPestana('descansos');
+
+el('anterior').onclick = ()=>{
+
+ lunes = sumarDias(lunes,-7);
+ cargarSemana();
 
 };
 
-el('tabDescansos').onclick = ()=>{
+el('siguiente').onclick = ()=>{
 
- el('agenda').hidden = true;
-
- el('descansos').hidden = false;
-
- el('tabDescansos').classList.add('activo');
-
- el('tabAgenda').classList.remove('activo');
-
- cargarBloqueos();
+ lunes = sumarDias(lunes,7);
+ cargarSemana();
 
 };
 
-el('fecha').addEventListener(
- 'change',cargarCitas
-);
+el('semanaActual').onclick = ()=>{
 
-el('barbero').addEventListener(
- 'change',cargarCitas
-);
+ lunes = obtenerLunes(fechaChile(new Date()));
+ cargarSemana();
 
-el('barberoBloqueo').addEventListener('change',()=>{
+};
+
+el('barberoSemana').onchange = cargarSemana;
+
+el('fecha').onchange = cargarCitas;
+
+el('barbero').onchange = cargarCitas;
+
+el('barberoBloqueo').onchange = ()=>{
 
  el('mensajeBloqueo').textContent = '';
-
  cargarBloqueos();
 
-});
+};
+
+el('cerrarDetalle').onclick =
+ ()=>el('detalle').close();
 
 el('salir').onclick = async()=>{
 
@@ -978,7 +1403,6 @@ el('salir').onclick = async()=>{
  if(error){
 
   alert('No se pudo cerrar la sesión.');
-
   return;
 
  }
@@ -990,6 +1414,5 @@ el('salir').onclick = async()=>{
 iniciar();
 
 </script>
-
 </body>
 </html>
