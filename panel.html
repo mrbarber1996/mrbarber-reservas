@@ -9,93 +9,98 @@
 
 <style>
 *{box-sizing:border-box}
-
 body{
  margin:0;
  background:#f5efe6;
  color:#211e1a;
  font-family:Arial,sans-serif;
 }
-
 header{
  text-align:center;
  padding:25px;
  border-bottom:1px solid #cbbba6;
 }
-
 .logo{
  width:210px;
  max-width:90%;
 }
-
 main{
- max-width:1000px;
+ width:100%;
+ max-width:900px;
  margin:auto;
  padding:20px;
 }
-
 h1,h2{
  font-family:Georgia,serif;
  font-weight:normal;
  color:#59382f;
 }
-
 .subtitulo{
  font-size:12px;
  letter-spacing:2px;
  color:#8b6848;
 }
-
-.resumen{
+.resumen,.horarios{
  display:grid;
- grid-template-columns:repeat(2,1fr);
+ grid-template-columns:repeat(2,minmax(0,1fr));
  gap:12px;
- margin:25px 0;
+ margin:20px 0;
 }
-
 .tarjeta{
  background:#fffdf9;
  border:1px solid #d8cbbb;
  border-radius:12px;
- padding:20px;
+ padding:18px;
+ min-width:0;
 }
-
 .numero{
  font-size:28px;
  font-weight:bold;
  color:#59382f;
  margin-top:10px;
 }
-
 label{
  display:block;
  font-size:12px;
  font-weight:bold;
  margin:15px 0 8px;
 }
-
 input,select{
+ display:block;
  width:100%;
+ max-width:100%;
+ min-width:0;
  padding:14px;
  font-size:16px;
  border:1px solid #cbbba6;
  border-radius:8px;
  background:#fffdf9;
+ color:#211e1a;
 }
-
+input[type=date],input[type=time]{
+ -webkit-appearance:none;
+ appearance:none;
+ min-height:48px;
+}
 button{
- padding:13px 18px;
+ padding:14px 18px;
  border:0;
  border-radius:8px;
  background:#211e1a;
  color:white;
  cursor:pointer;
+ font-size:14px;
 }
-
-button:disabled{
- opacity:.5;
+button:disabled{opacity:.5}
+.completo{
+ width:100%;
+ margin-top:20px;
 }
-
+.secundario{
+ background:transparent;
+ border:1px solid #8b6848;
+ color:#59382f;
+}
 .cita{
  background:#fffdf9;
  border:1px solid #d8cbbb;
@@ -103,36 +108,51 @@ button:disabled{
  border-radius:10px;
  padding:18px;
  margin-bottom:12px;
+ overflow-wrap:anywhere;
 }
-
 .hora{
  font-size:23px;
  font-weight:bold;
  color:#59382f;
 }
-
 .etiqueta{
- font-size:11px;
- color:#795333;
- background:#eee0d1;
+ font-size:12px;
  border-radius:20px;
  padding:6px 10px;
  display:inline-block;
 }
-
-p{
- line-height:1.5;
+.confirmed{
+ background:#e1eadc;
+ color:#36533a;
 }
-
-#mensaje{
+.pending{
+ background:#f4e5c9;
+ color:#795333;
+}
+.cancelled{
+ background:#eee5df;
+ color:#805c50;
+}
+nav{
+ display:flex;
+ gap:10px;
+ margin:25px 0;
+}
+nav button{
+ flex:1;
+ background:#e7dbca;
+ color:#59382f;
+}
+nav button.activo{
+ background:#211e1a;
+ color:white;
+}
+p{line-height:1.5}
+.mensaje{
  color:#8b6848;
  font-size:14px;
 }
-
-[hidden]{
- display:none!important;
-}
-
+[hidden]{display:none!important}
 footer{
  text-align:center;
  padding:30px;
@@ -147,14 +167,8 @@ footer{
 <header>
 <img src="./logo-mrbarber.png"
  class="logo" alt="MRBARBER">
-
-<p class="subtitulo">
-GESTIÓN PRIVADA
-</p>
-
-<button id="salir">
-Cerrar sesión
-</button>
+<p class="subtitulo">GESTIÓN PRIVADA</p>
+<button id="salir">Cerrar sesión</button>
 </header>
 
 <main id="contenido" hidden>
@@ -162,8 +176,7 @@ Cerrar sesión
 <h1 id="bienvenida">Bienvenido</h1>
 <p id="rol"></p>
 
-<div class="resumen">
-
+<div class="resumen" id="resumen">
 <div class="tarjeta">
 Citas activas
 <div class="numero" id="totalCitas">0</div>
@@ -173,8 +186,18 @@ Citas activas
 Valor de reservas
 <div class="numero" id="ingresos">$0</div>
 </div>
-
 </div>
+
+<nav>
+<button id="tabAgenda" class="activo">
+Mi agenda
+</button>
+<button id="tabDescansos">
+Descansos
+</button>
+</nav>
+
+<section id="agenda">
 
 <h2>Agenda diaria</h2>
 
@@ -182,18 +205,71 @@ Valor de reservas
 <input type="date" id="fecha">
 
 <div id="filtroBarbero" hidden>
-
 <label for="barbero">BARBERO</label>
-
 <select id="barbero">
 <option value="">Todos los barberos</option>
 </select>
-
 </div>
 
-<p id="mensaje" role="status"></p>
-
+<p id="mensaje" class="mensaje" role="status"></p>
 <div id="citas"></div>
+
+</section>
+
+<section id="descansos" hidden>
+
+<h2>Gestionar horarios</h2>
+
+<p>Bloquea temporalmente tu disponibilidad para descansos, almuerzos o motivos personales.</p>
+
+<form id="formBloqueo" class="tarjeta">
+
+<div id="selectorBloqueo" hidden>
+<label for="barberoBloqueo">BARBERO</label>
+<select id="barberoBloqueo"></select>
+</div>
+
+<label for="fechaBloqueo">FECHA</label>
+<input type="date" id="fechaBloqueo" required>
+
+<div class="horarios">
+<div>
+<label for="desde">DESDE</label>
+<input type="time" id="desde"
+ value="13:00" required>
+</div>
+
+<div>
+<label for="hasta">HASTA</label>
+<input type="time" id="hasta"
+ value="14:00" required>
+</div>
+</div>
+
+<label for="motivo">MOTIVO</label>
+<select id="motivo">
+<option>Almuerzo</option>
+<option>Descanso</option>
+<option>Trámite</option>
+<option>Motivo personal</option>
+<option>Otro</option>
+</select>
+
+<button class="completo" id="guardarBloqueo"
+ type="submit">
+BLOQUEAR HORARIO
+</button>
+
+<p id="mensajeBloqueo" class="mensaje"
+ role="status"></p>
+
+</form>
+
+<h2>Próximos bloqueos</h2>
+<p id="estadoBloqueos" class="mensaje"></p>
+<div id="bloqueos"></div>
+
+</section>
 
 </main>
 
@@ -222,37 +298,86 @@ let perfil = null;
 let equipo = [];
 let servicios = [];
 let solicitud = 0;
+let solicitudBloqueos = 0;
 
 const moneda = new Intl.NumberFormat('es-CL',{
  style:'currency',
  currency:'CLP'
 });
 
-function fechaChile(d){
+const formatoChile = new Intl.DateTimeFormat(
+ 'en-CA',{
+ timeZone:'America/Santiago',
+ year:'numeric',
+ month:'2-digit',
+ day:'2-digit',
+ hour:'2-digit',
+ minute:'2-digit',
+ second:'2-digit',
+ hourCycle:'h23'
+});
 
- const partes = new Intl.DateTimeFormat('en-CA',{
-  timeZone:'America/Santiago',
-  year:'numeric',
-  month:'2-digit',
-  day:'2-digit'
- }).formatToParts(d);
-
- const p = Object.fromEntries(
-  partes.map(x=>[x.type,x.value])
+function partesChile(d){
+ return Object.fromEntries(
+  formatoChile.formatToParts(d)
+  .map(x=>[x.type,x.value])
  );
+}
 
+function fechaChile(d){
+ const p = partesChile(d);
  return `${p.year}-${p.month}-${p.day}`;
 }
 
 function horaChile(d){
+ const p = partesChile(new Date(d));
+ return `${p.hour}:${p.minute}`;
+}
 
- return new Date(d).toLocaleTimeString('es-CL',{
-  timeZone:'America/Santiago',
-  hour:'2-digit',
-  minute:'2-digit',
-  hour12:false
- });
+function fechaHoraChile(fecha,hora){
 
+ const objetivo = Date.parse(
+  fecha+'T'+hora+':00Z'
+ );
+
+ let instante = objetivo;
+
+ for(let i=0;i<4;i++){
+
+  const p = partesChile(new Date(instante));
+
+  const local = Date.parse(
+   `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}:${p.second}Z`
+  );
+
+  const diferencia = objetivo-local;
+
+  if(diferencia===0) break;
+
+  instante += diferencia;
+
+ }
+
+ const resultado = new Date(instante);
+
+ if(fechaChile(resultado)!==fecha ||
+    horaChile(resultado)!==hora){
+  throw new Error('Horario local no válido.');
+ }
+
+ return resultado.toISOString();
+
+}
+
+function agregarTexto(contenedor,texto,clase){
+ const p = document.createElement('p');
+ p.textContent = texto;
+ if(clase) p.className = clase;
+ contenedor.appendChild(p);
+}
+
+function nombreBarbero(id){
+ return equipo.find(b=>b.id===id)?.name || 'Barbero';
 }
 
 async function iniciar(){
@@ -262,88 +387,84 @@ async function iniciar(){
   const {data,error} = await supabase.auth.getUser();
 
   if(error || !data.user){
-
    location.replace('./login.html');
    return;
-
   }
 
-  const usuario = data.user;
+  const resultadoAdmin = await supabase.rpc('is_admin');
 
-  const resultadoAdmin =
-   await supabase.rpc('is_admin');
-
-  if(resultadoAdmin.error){
+  if(resultadoAdmin.error)
    throw resultadoAdmin.error;
-  }
 
-  administrador = resultadoAdmin.data === true;
+  administrador = resultadoAdmin.data===true;
 
   const resultadoEquipo = await supabase
    .from('barbers')
    .select('id,name,user_id,active')
    .eq('active',true);
 
-  if(resultadoEquipo.error){
+  if(resultadoEquipo.error)
    throw resultadoEquipo.error;
-  }
 
   equipo = resultadoEquipo.data;
 
   perfil = equipo.find(
-   b=>b.user_id === usuario.id
+   b=>b.user_id===data.user.id
   );
 
   if(!administrador && !perfil){
-
-   el('acceso').textContent =
-    'Esta cuenta no tiene acceso al equipo MRBARBER.';
-
-   return;
-
+   throw new Error('Cuenta sin acceso al equipo.');
   }
 
   const resultadoServicios = await supabase
    .from('services')
    .select('id,name,price');
 
-  if(resultadoServicios.error){
+  if(resultadoServicios.error)
    throw resultadoServicios.error;
-  }
 
   servicios = resultadoServicios.data;
 
   el('bienvenida').textContent =
-   'Bienvenido, ' +
-   (perfil?.name || 'Administrador');
+   'Bienvenido, '+(perfil?.name || 'Administrador');
 
   el('rol').textContent = administrador
    ? 'Administrador MRBARBER'
    : 'Panel personal de barbero';
 
-  el('tarjetaIngresos').hidden =
-   !administrador;
-
-  el('filtroBarbero').hidden =
-   !administrador;
+  el('tarjetaIngresos').hidden = !administrador;
+  el('filtroBarbero').hidden = !administrador;
+  el('selectorBloqueo').hidden = !administrador;
 
   if(administrador){
 
    equipo.forEach(b=>{
 
-    const opcion =
-     document.createElement('option');
+    ['barbero','barberoBloqueo'].forEach(id=>{
 
-    opcion.value = b.id;
-    opcion.textContent = b.name;
+     const opcion = document.createElement('option');
+     opcion.value = b.id;
+     opcion.textContent = b.name;
+     el(id).appendChild(opcion);
 
-    el('barbero').appendChild(opcion);
+    });
 
    });
 
+   if(perfil)
+    el('barberoBloqueo').value = perfil.id;
+
+  }else{
+
+   el('resumen').style.gridTemplateColumns = '1fr';
+
   }
 
-  el('fecha').value = fechaChile(new Date());
+  const hoy = fechaChile(new Date());
+
+  el('fecha').value = hoy;
+  el('fechaBloqueo').value = hoy;
+  el('fechaBloqueo').min = hoy;
 
   el('acceso').hidden = true;
   el('contenido').hidden = false;
@@ -353,8 +474,7 @@ async function iniciar(){
  }catch(error){
 
   el('acceso').textContent =
-   'No pudimos comprobar tu acceso. ' +
-   error.message;
+   'No pudimos comprobar tu acceso: '+error.message;
 
  }
 
@@ -364,9 +484,7 @@ async function cargarCitas(){
 
  const actual = ++solicitud;
 
- el('mensaje').textContent =
-  'Cargando agenda...';
-
+ el('mensaje').textContent = 'Cargando agenda...';
  el('citas').replaceChildren();
  el('totalCitas').textContent = '—';
  el('ingresos').textContent = '—';
@@ -376,14 +494,11 @@ async function cargarCitas(){
   const fecha = el('fecha').value;
 
   if(!fecha){
-   el('mensaje').textContent =
-    'Selecciona una fecha.';
+   el('mensaje').textContent = 'Selecciona una fecha.';
    return;
   }
 
-  const base = new Date(
-   fecha + 'T00:00:00Z'
-  );
+  const base = new Date(fecha+'T00:00:00Z');
 
   const desde = new Date(
    base.getTime()-86400000
@@ -395,25 +510,14 @@ async function cargarCitas(){
 
   let consulta = supabase
    .from('appointments')
-   .select(`
-    id,
-    barber_id,
-    service_id,
-    customer_name,
-    customer_phone,
-    start_at,
-    end_at,
-    status
-   `)
+   .select('id,barber_id,service_id,customer_name,customer_phone,start_at,end_at,status')
    .gte('start_at',desde)
    .lt('start_at',hasta)
    .order('start_at');
 
   if(!administrador){
 
-   consulta = consulta.eq(
-    'barber_id',perfil.id
-   );
+   consulta = consulta.eq('barber_id',perfil.id);
 
   }else if(el('barbero').value){
 
@@ -425,8 +529,7 @@ async function cargarCitas(){
 
   const {data,error} = await consulta;
 
-  if(actual !== solicitud) return;
-
+  if(actual!==solicitud) return;
   if(error) throw error;
 
   const citas = data.filter(
@@ -437,74 +540,47 @@ async function cargarCitas(){
    c=>['confirmed','pending'].includes(c.status)
   );
 
-  el('totalCitas').textContent =
-   activas.length;
+  el('totalCitas').textContent = activas.length;
 
   if(administrador){
 
-   const total = activas.reduce((s,c)=>{
-
-    const servicio = servicios.find(
+   const total = activas.reduce((s,c)=>
+    s+Number(servicios.find(
      x=>x.id===c.service_id
-    );
+    )?.price||0),0
+   );
 
-    return s+Number(servicio?.price||0);
-
-   },0);
-
-   el('ingresos').textContent =
-    moneda.format(total);
+   el('ingresos').textContent = moneda.format(total);
 
   }
 
   el('mensaje').textContent = citas.length
-   ? citas.length + ' reservas registradas.'
+   ? citas.length+' reservas registradas.'
    : 'No hay reservas para esta fecha.';
 
   citas.forEach(c=>{
 
-   const servicio = servicios.find(
-    s=>s.id===c.service_id
-   );
-
-   const barbero = equipo.find(
-    b=>b.id===c.barber_id
-   );
-
-   const tarjeta =
-    document.createElement('div');
-
+   const tarjeta = document.createElement('div');
    tarjeta.className = 'cita';
 
-   function agregar(texto,clase){
-
-    const p = document.createElement('p');
-    p.textContent = texto;
-
-    if(clase) p.className = clase;
-
-    tarjeta.appendChild(p);
-
-   }
-
-   agregar(
-    horaChile(c.start_at) + ' – ' +
-    horaChile(c.end_at),
+   agregarTexto(tarjeta,
+    horaChile(c.start_at)+' – '+horaChile(c.end_at),
     'hora'
    );
 
-   agregar(c.customer_name);
+   agregarTexto(tarjeta,c.customer_name);
 
-   agregar(
-    servicio?.name || 'Servicio'
+   agregarTexto(tarjeta,
+    servicios.find(s=>s.id===c.service_id)?.name
+    || 'Servicio'
    );
 
-   agregar(
-    'Barbero: ' + (barbero?.name || '—')
+   agregarTexto(tarjeta,
+    'Barbero: '+nombreBarbero(c.barber_id)
    );
 
-   agregar(
-    'WhatsApp: ' + c.customer_phone
+   agregarTexto(tarjeta,
+    'WhatsApp: '+c.customer_phone
    );
 
    const estados = {
@@ -513,9 +589,9 @@ async function cargarCitas(){
     cancelled:'Cancelada'
    };
 
-   agregar(
-    estados[c.status] || c.status,
-    'etiqueta'
+   agregarTexto(tarjeta,
+    estados[c.status]||c.status,
+    'etiqueta '+c.status
    );
 
    el('citas').appendChild(tarjeta);
@@ -524,24 +600,221 @@ async function cargarCitas(){
 
  }catch(error){
 
-  if(actual !== solicitud) return;
+  if(actual!==solicitud) return;
 
   el('mensaje').textContent =
-   'Error al cargar agenda: ' + error.message;
+   'Error al cargar agenda: '+error.message;
 
  }
 
 }
 
-el('fecha').addEventListener(
- 'change',cargarCitas
-);
+function barberoSeleccionado(){
 
-el('barbero').addEventListener(
- 'change',cargarCitas
-);
+ return administrador
+  ? el('barberoBloqueo').value
+  : perfil.id;
 
-el('salir').addEventListener('click',async()=>{
+}
+
+async function cargarBloqueos(){
+
+ const actual = ++solicitudBloqueos;
+
+ el('bloqueos').replaceChildren();
+
+ el('estadoBloqueos').textContent =
+  'Cargando bloqueos...';
+
+ try{
+
+  const {data,error} = await supabase
+   .from('barber_blocks')
+   .select('id,barber_id,start_at,end_at,reason')
+   .eq('barber_id',barberoSeleccionado())
+   .gt('end_at',new Date().toISOString())
+   .order('start_at');
+
+  if(actual!==solicitudBloqueos) return;
+  if(error) throw error;
+
+  el('estadoBloqueos').textContent = data.length
+   ? data.length+' bloqueos registrados.'
+   : 'No tienes próximos bloqueos.';
+
+  data.forEach(b=>{
+
+   const tarjeta = document.createElement('div');
+   tarjeta.className = 'cita';
+
+   agregarTexto(tarjeta,
+    fechaChile(new Date(b.start_at))
+   );
+
+   agregarTexto(tarjeta,
+    horaChile(b.start_at)+' – '+horaChile(b.end_at),
+    'hora'
+   );
+
+   agregarTexto(tarjeta,b.reason||'Descanso');
+
+   agregarTexto(tarjeta,
+    'Barbero: '+nombreBarbero(b.barber_id)
+   );
+
+   const boton = document.createElement('button');
+
+   boton.textContent = 'Eliminar bloqueo';
+   boton.className = 'secundario';
+
+   boton.onclick = async()=>{
+
+    if(!confirm('¿Deseas liberar este horario?'))
+     return;
+
+    boton.disabled = true;
+
+    try{
+
+     const {data,error} = await supabase
+      .from('barber_blocks')
+      .delete()
+      .eq('id',b.id)
+      .eq('barber_id',b.barber_id)
+      .select('id');
+
+     if(error) throw error;
+
+     if(!data.length)
+      throw new Error('No se pudo eliminar el bloqueo.');
+
+     await cargarBloqueos();
+
+    }catch(error){
+
+     alert(error.message);
+     boton.disabled = false;
+
+    }
+
+   };
+
+   tarjeta.appendChild(boton);
+   el('bloqueos').appendChild(tarjeta);
+
+  });
+
+ }catch(error){
+
+  if(actual!==solicitudBloqueos) return;
+
+  el('estadoBloqueos').textContent =
+   'Error: '+error.message;
+
+ }
+
+}
+
+el('formBloqueo').addEventListener('submit',async e=>{
+
+ e.preventDefault();
+
+ const boton = el('guardarBloqueo');
+
+ if(boton.disabled) return;
+
+ boton.disabled = true;
+ boton.textContent = 'GUARDANDO...';
+ el('mensajeBloqueo').textContent = '';
+
+ try{
+
+  const fecha = el('fechaBloqueo').value;
+
+  const inicio = fechaHoraChile(
+   fecha,el('desde').value
+  );
+
+  const termino = fechaHoraChile(
+   fecha,el('hasta').value
+  );
+
+  if(new Date(termino)<=new Date(inicio)){
+   throw new Error(
+    'La hora de término debe ser posterior al inicio.'
+   );
+  }
+
+  if(new Date(inicio)<=new Date()){
+   throw new Error(
+    'Selecciona un horario futuro.'
+   );
+  }
+
+  const {error} = await supabase
+   .from('barber_blocks')
+   .insert({
+    barber_id:barberoSeleccionado(),
+    start_at:inicio,
+    end_at:termino,
+    reason:el('motivo').value
+   });
+
+  if(error) throw error;
+
+  el('mensajeBloqueo').textContent =
+   'Horario bloqueado correctamente.';
+
+  await cargarBloqueos();
+
+ }catch(error){
+
+  el('mensajeBloqueo').textContent =
+   'No se pudo bloquear: '+error.message;
+
+ }finally{
+
+  boton.disabled = false;
+  boton.textContent = 'BLOQUEAR HORARIO';
+
+ }
+
+});
+
+el('tabAgenda').onclick = ()=>{
+
+ el('agenda').hidden = false;
+ el('descansos').hidden = true;
+
+ el('tabAgenda').classList.add('activo');
+ el('tabDescansos').classList.remove('activo');
+
+ cargarCitas();
+
+};
+
+el('tabDescansos').onclick = ()=>{
+
+ el('agenda').hidden = true;
+ el('descansos').hidden = false;
+
+ el('tabDescansos').classList.add('activo');
+ el('tabAgenda').classList.remove('activo');
+
+ cargarBloqueos();
+
+};
+
+el('fecha').addEventListener('change',cargarCitas);
+
+el('barbero').addEventListener('change',cargarCitas);
+
+el('barberoBloqueo').addEventListener('change',()=>{
+ el('mensajeBloqueo').textContent = '';
+ cargarBloqueos();
+});
+
+el('salir').onclick = async()=>{
 
  const {error} = await supabase.auth.signOut();
 
@@ -552,7 +825,7 @@ el('salir').addEventListener('click',async()=>{
 
  location.replace('./login.html');
 
-});
+};
 
 iniciar();
 
