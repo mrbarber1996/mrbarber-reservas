@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
 <title>MRBARBER 1996 | Reservas</title>
 
 <style>
@@ -120,6 +121,46 @@ footer{
  padding:30px;
  font-size:13px;
 }
+#confirmacion{
+ background:#fffdf9;
+ border:1px solid #cbbba6;
+ border-radius:14px;
+ padding:25px;
+ margin-top:25px;
+ text-align:center;
+}
+#confirmacion h2{
+ color:#59382f;
+ margin-top:10px;
+}
+.check{
+ font-size:38px;
+ color:#8b6848;
+}
+.btn-secundario{
+ display:block;
+ width:100%;
+ padding:15px;
+ border:1px solid #8b6848;
+ background:transparent;
+ color:#59382f;
+ border-radius:10px;
+ margin-top:12px;
+ text-decoration:none;
+ font-size:14px;
+ cursor:pointer;
+}
+.detalle{
+ font-size:16px;
+ font-weight:bold;
+}
+.nota{
+ font-size:12px;
+ color:#8b6848;
+}
+[hidden]{
+ display:none!important;
+}
 </style>
 </head>
 
@@ -185,17 +226,19 @@ Selecciona un servicio y una fecha.
 <label for="nombre">TU NOMBRE</label>
 <input type="text" id="nombre"
  placeholder="Nombre y apellido"
- autocomplete="name" required>
+ autocomplete="name"
+ minlength="2" maxlength="100" required>
 
 <label for="telefono">WHATSAPP</label>
 <input type="tel" id="telefono"
- placeholder="+56 9"
+ placeholder="+56 9 1234 5678"
  autocomplete="tel" required>
 
 <label for="correo">CORREO ELECTRÓNICO</label>
 <input type="email" id="correo"
  placeholder="Tu correo"
- autocomplete="email" required>
+ autocomplete="email"
+ maxlength="254" required>
 
 <br><br>
 
@@ -206,12 +249,58 @@ CONFIRMAR RESERVA
 
 <p id="mensaje" aria-live="polite"></p>
 
-<p style="font-size:12px;color:#8b6848">
+<p class="nota">
+Solo puedes mantener una reserva activa
+por número de WhatsApp. Si necesitas
+cambiar tu hora, cancela primero tu
+reserva anterior.
+</p>
+
+<p class="nota">
 Agenda en fase de prueba. Los datos ingresados
 se utilizan para gestionar tu reserva.
 </p>
 
 </form>
+
+<div id="confirmacion" hidden>
+
+<div class="check">✓</div>
+
+<h2>¡Reserva confirmada!</h2>
+
+<p>Gracias por elegir MRBARBER.</p>
+
+<p id="detalleReserva" class="detalle"></p>
+
+<p>Te esperamos para vivir una
+experiencia diferente.</p>
+
+<button type="button"
+ id="copiarEnlace" class="btn-secundario">
+COPIAR ENLACE DE CANCELACIÓN
+</button>
+
+<a id="enlaceCancelar"
+ class="btn-secundario">
+CANCELAR MI RESERVA
+</a>
+
+<p id="estadoCopia" class="nota"
+ aria-live="polite"></p>
+
+<input id="enlaceManual"
+ aria-label="Enlace privado de cancelación"
+ readonly hidden>
+
+<p class="nota">
+Guarda tu enlace privado.
+Lo necesitarás si deseas cancelar tu cita.
+No lo compartas con otras personas.
+</p>
+
+</div>
+
 </section>
 
 <footer>
@@ -242,9 +331,17 @@ const confirmar = document.getElementById('confirmar');
 const mensaje = document.getElementById('mensaje');
 const formulario = document.getElementById('formReserva');
 
+const confirmacion = document.getElementById('confirmacion');
+const detalleReserva = document.getElementById('detalleReserva');
+const enlaceCancelar = document.getElementById('enlaceCancelar');
+const copiarEnlace = document.getElementById('copiarEnlace');
+const estadoCopia = document.getElementById('estadoCopia');
+const enlaceManual = document.getElementById('enlaceManual');
+
 let horaElegida = null;
 let solicitud = 0;
 let guardando = false;
+let enlacePrivado = '';
 
 const formatoFecha = new Intl.DateTimeFormat(
  'en-CA',
@@ -273,12 +370,27 @@ const limite = new Date(
 limite.setUTCDate(limite.getUTCDate()+30);
 fecha.max = fechaChile(limite);
 
+function normalizarTelefono(valor){
+
+ let numero = valor.replace(/\D/g,'');
+
+ if(/^9\d{8}$/.test(numero)){
+  numero = '56' + numero;
+ }
+
+ if(/^569\d{8}$/.test(numero)){
+  return '+' + numero;
+ }
+
+ return '';
+}
+
 function validar(){
  confirmar.disabled =
   guardando ||
   !horaElegida ||
-  !nombre.value.trim() ||
-  telefono.value.replace(/\D/g,'').length < 9 ||
+  nombre.value.trim().length < 2 ||
+  !normalizarTelefono(telefono.value) ||
   !correo.value.trim() ||
   !formulario.checkValidity();
 }
@@ -390,12 +502,17 @@ formulario.addEventListener('submit',async e=>{
 
  e.preventDefault();
 
+ const numero = normalizarTelefono(telefono.value);
+
  if(guardando || !horaElegida ||
     !formulario.checkValidity() ||
-    telefono.value.replace(/\D/g,'').length < 9 ||
-    !nombre.value.trim()) return;
+    !numero ||
+    nombre.value.trim().length < 2) return;
 
  const elegida = horaElegida;
+
+ const servicioElegido =
+  servicio.options[servicio.selectedIndex].textContent;
 
  guardando = true;
  confirmar.disabled = true;
@@ -410,34 +527,73 @@ formulario.addEventListener('submit',async e=>{
 
  try{
 
-  const reserva = await crearReserva(
+  const token = await crearReserva(
    servicio.value,
    elegida.barber_id,
    elegida.slot_start,
    nombre.value.trim(),
-   telefono.value.trim(),
+   numero,
    correo.value.trim()
   );
 
-  if(!reserva){
-   throw new Error('No se recibió confirmación.');
+  if(typeof token !== 'string' ||
+   !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token)){
+   throw new Error(
+    'No se recibió un código válido. Consulta con la barbería antes de volver a reservar.'
+   );
   }
 
-  mensaje.textContent =
-   '¡Reserva registrada! ' +
-   fecha.value + ' a las ' +
+  const urlCancelar = new URL(
+   './cancelar.html',
+   window.location.href
+  );
+
+  urlCancelar.hash = token;
+  enlacePrivado = urlCancelar.href;
+
+  enlaceCancelar.href = enlacePrivado;
+
+  const fechaReserva = new Date(
+   elegida.slot_start
+  ).toLocaleDateString('es-CL',{
+   timeZone:'America/Santiago',
+   day:'numeric',
+   month:'long',
+   year:'numeric'
+  });
+
+  detalleReserva.textContent =
+   servicioElegido + ' | ' +
+   fechaReserva + ' a las ' +
    elegida.hora_local +
-   ' con ' + elegida.barber_name + '.';
+   ' con ' + elegida.barber_name;
+
+  confirmacion.hidden = false;
+  formulario.hidden = true;
 
   nombre.value = '';
   telefono.value = '';
   correo.value = '';
 
+  confirmacion.scrollIntoView({
+   behavior:'smooth',
+   block:'center'
+  });
+
  }catch(e){
 
-  mensaje.textContent =
-   'No pudimos confirmar la reserva: ' +
-   e.message;
+  if(/reserva activa/i.test(e.message)){
+
+   mensaje.textContent =
+    'Ya tienes una reserva activa. Debes cancelarla antes de agendar otra.';
+
+  }else{
+
+   mensaje.textContent =
+    'No pudimos completar la confirmación: ' +
+    e.message;
+
+  }
 
  }finally{
 
@@ -446,8 +602,37 @@ formulario.addEventListener('submit',async e=>{
   guardando = false;
   confirmar.textContent = 'CONFIRMAR RESERVA';
 
-  await actualizarHoras();
-  validar();
+  if(!formulario.hidden){
+   await actualizarHoras();
+   validar();
+  }
+ }
+
+});
+
+copiarEnlace.addEventListener('click',async()=>{
+
+ if(!enlacePrivado) return;
+
+ try{
+
+  await navigator.clipboard.writeText(
+   enlacePrivado
+  );
+
+  estadoCopia.textContent =
+   '¡Enlace copiado correctamente!';
+
+ }catch(e){
+
+  enlaceManual.hidden = false;
+  enlaceManual.value = enlacePrivado;
+  enlaceManual.focus();
+  enlaceManual.select();
+
+  estadoCopia.textContent =
+   'Mantén presionado el enlace para copiarlo.';
+
  }
 
 });
@@ -461,6 +646,12 @@ formulario.addEventListener('submit',async e=>{
 
 [nombre,telefono,correo].forEach(c=>{
  c.addEventListener('input',validar);
+});
+
+telefono.addEventListener('blur',()=>{
+ const numero = normalizarTelefono(telefono.value);
+ if(numero) telefono.value = numero;
+ validar();
 });
 
 iniciar();
