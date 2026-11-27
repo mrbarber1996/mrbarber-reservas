@@ -1,0 +1,223 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MRBARBER 1996 | Reserva tu hora</title>
+<style>
+:root {
+  --beige:#eee5d7;
+  --cream:#f8f4ed;
+  --brown:#8b6848;
+  --black:#201e1b;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--black);
+  font-family:Arial,sans-serif;
+}
+header{
+  padding:24px 20px;
+  text-align:center;
+  border-bottom:1px solid #cbbba6;
+}
+.logo{
+  font-family:Georgia,serif;
+  font-size:30px;
+  font-weight:bold;
+  letter-spacing:5px;
+}
+.logo small{
+  display:block;
+  font:11px Arial,sans-serif;
+  letter-spacing:6px;
+  margin-top:5px;
+}
+.hero{
+  padding:65px 22px;
+  text-align:center;
+  background:linear-gradient(135deg,#e9dece,#f7f1e7);
+}
+.eyebrow{
+  color:var(--brown);
+  letter-spacing:4px;
+  font-size:11px;
+  font-weight:bold;
+}
+h1{
+  font-family:Georgia,serif;
+  font-size:42px;
+  line-height:1.12;
+  font-weight:normal;
+  margin:20px 0;
+}
+.hero p{
+  max-width:440px;
+  margin:0 auto 28px;
+  line-height:1.7;
+  color:#62594f;
+}
+.btn{
+  display:inline-block;
+  background:var(--black);
+  color:white;
+  padding:16px 27px;
+  text-decoration:none;
+  letter-spacing:2px;
+  font-size:12px;
+  border:0;
+  cursor:pointer;
+}
+section{
+  max-width:650px;
+  margin:auto;
+  padding:45px 22px;
+}
+.section-title{
+  text-align:center;
+  font-family:Georgia,serif;
+  font-size:29px;
+  font-weight:normal;
+  margin:0 0 12px;
+}
+.sub{
+  text-align:center;
+  color:#817466;
+  font-size:13px;
+  margin-bottom:30px;
+}
+.service{
+  border:1px solid #d8cbbb;
+  padding:20px;
+  margin:12px 0;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  background:#fffdf9;
+}
+.service strong{font-family:Georgia,serif;font-size:19px}
+.price{color:var(--brown);font-weight:bold;white-space:nowrap}
+.booking{
+  background:var(--beige);
+  max-width:none;
+}
+.booking-inner{max-width:600px;margin:auto}
+label{
+  display:block;
+  font-size:12px;
+  letter-spacing:1px;
+  margin:19px 0 8px;
+  font-weight:bold;
+}
+input,select{
+  width:100%;
+  padding:15px;
+  border:1px solid #c9b9a6;
+  background:#fffdf9;
+  color:var(--black);
+  font-size:15px;
+  border-radius:0;
+}
+.note{
+  font-size:12px;
+  color:#75695d;
+  line-height:1.6;
+  margin-top:18px;
+}
+button.btn{width:100%;margin-top:24px}
+footer{
+  text-align:center;
+  padding:30px 20px;
+  background:var(--black);
+  color:#eee5d7;
+  font-size:12px;
+  line-height:1.9;
+}
+footer strong{letter-spacing:3px;font-size:17px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">MRBARBER<small>1996</small></div>
+</header>
+
+<div class="hero">
+  <div class="eyebrow">ESTILO · IDENTIDAD · EXPERIENCIA</div>
+  <h1>Tu estilo habla<br>por ti.</h1>
+  <p>Más que un corte, una experiencia. Reserva tu próxima visita en MRBARBER.</p>
+  <a class="btn" href="#reservar">RESERVAR MI HORA</a>
+</div>
+
+<section>
+  <h2 class="section-title">Nuestros servicios</h2>
+  <p class="sub">DETALLES QUE MARCAN LA DIFERENCIA</p>
+  <div class="service">
+    <strong>Corte de cabello</strong>
+    <span class="price">$12.000</span>
+  </div>
+  <div class="service">
+    <strong>Corte + barba</strong>
+    <span class="price">$16.000</span>
+  </div>
+</section>
+
+<div class="booking" id="reservar">
+  <div class="booking-inner" style="padding:45px 22px">
+    <h2 class="section-title">Reserva tu hora</h2>
+    <p class="sub">ELIGE CÓMO QUIERES VIVIR TU EXPERIENCIA</p>
+
+    <form id="bookingForm">
+      <label for="service">SERVICIO</label>
+      <select id="service" required>
+        <option value="">Selecciona un servicio</option>
+        <option>Corte de cabello — $12.000</option>
+        <option>Corte + barba — $16.000</option>
+      </select>
+
+      <label for="barber">BARBERO</label>
+      <select id="barber" required>
+        <option value="">Selecciona tu barbero</option>
+        <option>Maikol</option>
+        <option>Javier</option>
+        <option>Luis</option>
+        <option>Cualquier barbero disponible</option>
+      </select>
+
+      <label for="date">FECHA</label>
+      <input id="date" type="date" required>
+
+      <label for="time">HORA PREFERIDA</label>
+      <input id="time" type="time" required>
+
+      <label for="name">TU NOMBRE</label>
+      <input id="name" type="text" placeholder="Nombre y apellido" required>
+
+      <label for="phone">WHATSAPP</label>
+      <input id="phone" type="tel" placeholder="+56 9 1234 5678" required>
+
+      <button class="btn" type="submit">CONTINUAR</button>
+      <p class="note">Esta es una primera versión visual. Las reservas todavía no se envían ni confirman; conectaremos el sistema de disponibilidad antes de publicarla.</p>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <strong>MRBARBER 1996</strong>
+  <p>Av. Primera Transversal 359<br>Padre Hurtado, Chile</p>
+  <p>Lunes a viernes: 10:00 – 20:00<br>Sábado: 09:00 – 18:00</p>
+  <p>ESTILO QUE TE IDENTIFICA.</p>
+</footer>
+
+<script>
+document.getElementById("bookingForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  alert("Esta es una vista de prueba. Pronto habilitaremos las reservas online.");
+});
+</script>
+</body>
+</html>
