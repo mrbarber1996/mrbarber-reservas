@@ -9,43 +9,51 @@
 
 <style>
 *{box-sizing:border-box}
+
 body{
  margin:0;
  background:#f5efe6;
  color:#211e1a;
  font-family:Arial,sans-serif;
 }
+
 header{
  text-align:center;
  padding:25px;
  border-bottom:1px solid #cbbba6;
 }
+
 .logo{
  width:210px;
  max-width:90%;
 }
+
 main{
  width:100%;
  max-width:900px;
  margin:auto;
  padding:20px;
 }
+
 h1,h2{
  font-family:Georgia,serif;
  font-weight:normal;
  color:#59382f;
 }
+
 .subtitulo{
  font-size:12px;
  letter-spacing:2px;
  color:#8b6848;
 }
+
 .resumen,.horarios{
  display:grid;
  grid-template-columns:repeat(2,minmax(0,1fr));
  gap:12px;
  margin:20px 0;
 }
+
 .tarjeta{
  background:#fffdf9;
  border:1px solid #d8cbbb;
@@ -53,18 +61,21 @@ h1,h2{
  padding:18px;
  min-width:0;
 }
+
 .numero{
  font-size:28px;
  font-weight:bold;
  color:#59382f;
  margin-top:10px;
 }
+
 label{
  display:block;
  font-size:12px;
  font-weight:bold;
  margin:15px 0 8px;
 }
+
 input,select{
  display:block;
  width:100%;
@@ -77,11 +88,13 @@ input,select{
  background:#fffdf9;
  color:#211e1a;
 }
+
 input[type=date],input[type=time]{
  -webkit-appearance:none;
  appearance:none;
  min-height:48px;
 }
+
 button{
  padding:14px 18px;
  border:0;
@@ -91,16 +104,20 @@ button{
  cursor:pointer;
  font-size:14px;
 }
+
 button:disabled{opacity:.5}
+
 .completo{
  width:100%;
  margin-top:20px;
 }
+
 .secundario{
  background:transparent;
  border:1px solid #8b6848;
  color:#59382f;
 }
+
 .cita{
  background:#fffdf9;
  border:1px solid #d8cbbb;
@@ -110,49 +127,61 @@ button:disabled{opacity:.5}
  margin-bottom:12px;
  overflow-wrap:anywhere;
 }
+
 .hora{
  font-size:23px;
  font-weight:bold;
  color:#59382f;
 }
+
 .etiqueta{
  font-size:12px;
  border-radius:20px;
  padding:6px 10px;
  display:inline-block;
 }
+
 .confirmed{
  background:#e1eadc;
  color:#36533a;
 }
+
 .pending{
  background:#f4e5c9;
  color:#795333;
 }
+
 .cancelled{
  background:#eee5df;
  color:#805c50;
 }
+
 nav{
  display:flex;
  gap:10px;
  margin:25px 0;
 }
+
 nav button{
  flex:1;
  background:#e7dbca;
  color:#59382f;
 }
+
 nav button.activo{
  background:#211e1a;
  color:white;
 }
+
 p{line-height:1.5}
+
 .mensaje{
  color:#8b6848;
  font-size:14px;
 }
+
 [hidden]{display:none!important}
+
 footer{
  text-align:center;
  padding:30px;
@@ -165,10 +194,14 @@ footer{
 <body>
 
 <header>
+
 <img src="./logo-mrbarber.png"
  class="logo" alt="MRBARBER">
+
 <p class="subtitulo">GESTIÓN PRIVADA</p>
+
 <button id="salir">Cerrar sesión</button>
+
 </header>
 
 <main id="contenido" hidden>
@@ -177,6 +210,7 @@ footer{
 <p id="rol"></p>
 
 <div class="resumen" id="resumen">
+
 <div class="tarjeta">
 Citas activas
 <div class="numero" id="totalCitas">0</div>
@@ -186,15 +220,19 @@ Citas activas
 Valor de reservas
 <div class="numero" id="ingresos">$0</div>
 </div>
+
 </div>
 
 <nav>
+
 <button id="tabAgenda" class="activo">
 Mi agenda
 </button>
+
 <button id="tabDescansos">
 Descansos
 </button>
+
 </nav>
 
 <section id="agenda">
@@ -205,13 +243,17 @@ Descansos
 <input type="date" id="fecha">
 
 <div id="filtroBarbero" hidden>
+
 <label for="barbero">BARBERO</label>
+
 <select id="barbero">
 <option value="">Todos los barberos</option>
 </select>
+
 </div>
 
 <p id="mensaje" class="mensaje" role="status"></p>
+
 <div id="citas"></div>
 
 </section>
@@ -220,33 +262,45 @@ Descansos
 
 <h2>Gestionar horarios</h2>
 
-<p>Bloquea temporalmente tu disponibilidad para descansos, almuerzos o motivos personales.</p>
+<p>Bloquea tu disponibilidad para descansos, almuerzos o motivos personales.</p>
 
 <form id="formBloqueo" class="tarjeta">
 
 <div id="selectorBloqueo" hidden>
+
 <label for="barberoBloqueo">BARBERO</label>
 <select id="barberoBloqueo"></select>
+
 </div>
 
 <label for="fechaBloqueo">FECHA</label>
+
 <input type="date" id="fechaBloqueo" required>
 
 <div class="horarios">
+
 <div>
+
 <label for="desde">DESDE</label>
+
 <input type="time" id="desde"
  value="13:00" required>
+
 </div>
 
 <div>
+
 <label for="hasta">HASTA</label>
+
 <input type="time" id="hasta"
  value="14:00" required>
+
 </div>
+
 </div>
 
 <label for="motivo">MOTIVO</label>
+
 <select id="motivo">
 <option>Almuerzo</option>
 <option>Descanso</option>
@@ -255,18 +309,22 @@ Descansos
 <option>Otro</option>
 </select>
 
-<button class="completo" id="guardarBloqueo"
- type="submit">
+<button class="completo"
+ id="guardarBloqueo" type="submit">
+
 BLOQUEAR HORARIO
+
 </button>
 
-<p id="mensajeBloqueo" class="mensaje"
- role="status"></p>
+<p id="mensajeBloqueo"
+ class="mensaje" role="status"></p>
 
 </form>
 
 <h2>Próximos bloqueos</h2>
+
 <p id="estadoBloqueos" class="mensaje"></p>
+
 <div id="bloqueos"></div>
 
 </section>
@@ -318,20 +376,28 @@ const formatoChile = new Intl.DateTimeFormat(
 });
 
 function partesChile(d){
+
  return Object.fromEntries(
   formatoChile.formatToParts(d)
   .map(x=>[x.type,x.value])
  );
+
 }
 
 function fechaChile(d){
+
  const p = partesChile(d);
+
  return `${p.year}-${p.month}-${p.day}`;
+
 }
 
 function horaChile(d){
+
  const p = partesChile(new Date(d));
+
  return `${p.hour}:${p.minute}`;
+
 }
 
 function fechaHoraChile(fecha,hora){
@@ -362,7 +428,9 @@ function fechaHoraChile(fecha,hora){
 
  if(fechaChile(resultado)!==fecha ||
     horaChile(resultado)!==hora){
+
   throw new Error('Horario local no válido.');
+
  }
 
  return resultado.toISOString();
@@ -370,14 +438,22 @@ function fechaHoraChile(fecha,hora){
 }
 
 function agregarTexto(contenedor,texto,clase){
+
  const p = document.createElement('p');
+
  p.textContent = texto;
+
  if(clase) p.className = clase;
+
  contenedor.appendChild(p);
+
 }
 
 function nombreBarbero(id){
- return equipo.find(b=>b.id===id)?.name || 'Barbero';
+
+ return equipo.find(b=>b.id===id)?.name
+ || 'Barbero';
+
 }
 
 async function iniciar(){
@@ -387,11 +463,14 @@ async function iniciar(){
   const {data,error} = await supabase.auth.getUser();
 
   if(error || !data.user){
+
    location.replace('./login.html');
    return;
+
   }
 
-  const resultadoAdmin = await supabase.rpc('is_admin');
+  const resultadoAdmin =
+   await supabase.rpc('is_admin');
 
   if(resultadoAdmin.error)
    throw resultadoAdmin.error;
@@ -413,7 +492,9 @@ async function iniciar(){
   );
 
   if(!administrador && !perfil){
+
    throw new Error('Cuenta sin acceso al equipo.');
+
   }
 
   const resultadoServicios = await supabase
@@ -433,7 +514,9 @@ async function iniciar(){
    : 'Panel personal de barbero';
 
   el('tarjetaIngresos').hidden = !administrador;
+
   el('filtroBarbero').hidden = !administrador;
+
   el('selectorBloqueo').hidden = !administrador;
 
   if(administrador){
@@ -442,9 +525,12 @@ async function iniciar(){
 
     ['barbero','barberoBloqueo'].forEach(id=>{
 
-     const opcion = document.createElement('option');
+     const opcion =
+      document.createElement('option');
+
      opcion.value = b.id;
      opcion.textContent = b.name;
+
      el(id).appendChild(opcion);
 
     });
@@ -463,10 +549,13 @@ async function iniciar(){
   const hoy = fechaChile(new Date());
 
   el('fecha').value = hoy;
+
   el('fechaBloqueo').value = hoy;
+
   el('fechaBloqueo').min = hoy;
 
   el('acceso').hidden = true;
+
   el('contenido').hidden = false;
 
   await cargarCitas();
@@ -485,8 +574,11 @@ async function cargarCitas(){
  const actual = ++solicitud;
 
  el('mensaje').textContent = 'Cargando agenda...';
+
  el('citas').replaceChildren();
+
  el('totalCitas').textContent = '—';
+
  el('ingresos').textContent = '—';
 
  try{
@@ -494,8 +586,10 @@ async function cargarCitas(){
   const fecha = el('fecha').value;
 
   if(!fecha){
+
    el('mensaje').textContent = 'Selecciona una fecha.';
    return;
+
   }
 
   const base = new Date(fecha+'T00:00:00Z');
@@ -530,6 +624,7 @@ async function cargarCitas(){
   const {data,error} = await consulta;
 
   if(actual!==solicitud) return;
+
   if(error) throw error;
 
   const citas = data.filter(
@@ -545,12 +640,15 @@ async function cargarCitas(){
   if(administrador){
 
    const total = activas.reduce((s,c)=>
+
     s+Number(servicios.find(
      x=>x.id===c.service_id
     )?.price||0),0
+
    );
 
-   el('ingresos').textContent = moneda.format(total);
+   el('ingresos').textContent =
+    moneda.format(total);
 
   }
 
@@ -561,18 +659,24 @@ async function cargarCitas(){
   citas.forEach(c=>{
 
    const tarjeta = document.createElement('div');
+
    tarjeta.className = 'cita';
 
    agregarTexto(tarjeta,
+
     horaChile(c.start_at)+' – '+horaChile(c.end_at),
+
     'hora'
+
    );
 
    agregarTexto(tarjeta,c.customer_name);
 
    agregarTexto(tarjeta,
+
     servicios.find(s=>s.id===c.service_id)?.name
     || 'Servicio'
+
    );
 
    agregarTexto(tarjeta,
@@ -584,14 +688,19 @@ async function cargarCitas(){
    );
 
    const estados = {
+
     confirmed:'Confirmada',
     pending:'Pendiente',
     cancelled:'Cancelada'
+
    };
 
    agregarTexto(tarjeta,
+
     estados[c.status]||c.status,
+
     'etiqueta '+c.status
+
    );
 
    el('citas').appendChild(tarjeta);
@@ -636,6 +745,7 @@ async function cargarBloqueos(){
    .order('start_at');
 
   if(actual!==solicitudBloqueos) return;
+
   if(error) throw error;
 
   el('estadoBloqueos').textContent = data.length
@@ -645,6 +755,7 @@ async function cargarBloqueos(){
   data.forEach(b=>{
 
    const tarjeta = document.createElement('div');
+
    tarjeta.className = 'cita';
 
    agregarTexto(tarjeta,
@@ -652,8 +763,11 @@ async function cargarBloqueos(){
    );
 
    agregarTexto(tarjeta,
+
     horaChile(b.start_at)+' – '+horaChile(b.end_at),
+
     'hora'
+
    );
 
    agregarTexto(tarjeta,b.reason||'Descanso');
@@ -665,6 +779,7 @@ async function cargarBloqueos(){
    const boton = document.createElement('button');
 
    boton.textContent = 'Eliminar bloqueo';
+
    boton.className = 'secundario';
 
    boton.onclick = async()=>{
@@ -686,6 +801,7 @@ async function cargarBloqueos(){
      if(error) throw error;
 
      if(!data.length)
+
       throw new Error('No se pudo eliminar el bloqueo.');
 
      await cargarBloqueos();
@@ -693,6 +809,7 @@ async function cargarBloqueos(){
     }catch(error){
 
      alert(error.message);
+
      boton.disabled = false;
 
     }
@@ -700,6 +817,7 @@ async function cargarBloqueos(){
    };
 
    tarjeta.appendChild(boton);
+
    el('bloqueos').appendChild(tarjeta);
 
   });
@@ -724,7 +842,9 @@ el('formBloqueo').addEventListener('submit',async e=>{
  if(boton.disabled) return;
 
  boton.disabled = true;
+
  boton.textContent = 'GUARDANDO...';
+
  el('mensajeBloqueo').textContent = '';
 
  try{
@@ -739,25 +859,50 @@ el('formBloqueo').addEventListener('submit',async e=>{
    fecha,el('hasta').value
   );
 
+  const barberId = barberoSeleccionado();
+
   if(new Date(termino)<=new Date(inicio)){
+
    throw new Error(
     'La hora de término debe ser posterior al inicio.'
    );
+
   }
 
   if(new Date(inicio)<=new Date()){
+
+   throw new Error('Selecciona un horario futuro.');
+
+  }
+
+  const citas = await supabase
+   .from('appointments')
+   .select('id')
+   .eq('barber_id',barberId)
+   .in('status',['confirmed','pending'])
+   .lt('start_at',termino)
+   .gt('end_at',inicio)
+   .limit(1);
+
+  if(citas.error) throw citas.error;
+
+  if(citas.data.length){
+
    throw new Error(
-    'Selecciona un horario futuro.'
+    'Ya existe una cita en este horario.'
    );
+
   }
 
   const {error} = await supabase
    .from('barber_blocks')
    .insert({
-    barber_id:barberoSeleccionado(),
+
+    barber_id:barberId,
     start_at:inicio,
     end_at:termino,
     reason:el('motivo').value
+
    });
 
   if(error) throw error;
@@ -775,6 +920,7 @@ el('formBloqueo').addEventListener('submit',async e=>{
  }finally{
 
   boton.disabled = false;
+
   boton.textContent = 'BLOQUEAR HORARIO';
 
  }
@@ -784,9 +930,11 @@ el('formBloqueo').addEventListener('submit',async e=>{
 el('tabAgenda').onclick = ()=>{
 
  el('agenda').hidden = false;
+
  el('descansos').hidden = true;
 
  el('tabAgenda').classList.add('activo');
+
  el('tabDescansos').classList.remove('activo');
 
  cargarCitas();
@@ -796,22 +944,31 @@ el('tabAgenda').onclick = ()=>{
 el('tabDescansos').onclick = ()=>{
 
  el('agenda').hidden = true;
+
  el('descansos').hidden = false;
 
  el('tabDescansos').classList.add('activo');
+
  el('tabAgenda').classList.remove('activo');
 
  cargarBloqueos();
 
 };
 
-el('fecha').addEventListener('change',cargarCitas);
+el('fecha').addEventListener(
+ 'change',cargarCitas
+);
 
-el('barbero').addEventListener('change',cargarCitas);
+el('barbero').addEventListener(
+ 'change',cargarCitas
+);
 
 el('barberoBloqueo').addEventListener('change',()=>{
+
  el('mensajeBloqueo').textContent = '';
+
  cargarBloqueos();
+
 });
 
 el('salir').onclick = async()=>{
@@ -819,8 +976,11 @@ el('salir').onclick = async()=>{
  const {error} = await supabase.auth.signOut();
 
  if(error){
+
   alert('No se pudo cerrar la sesión.');
+
   return;
+
  }
 
  location.replace('./login.html');
