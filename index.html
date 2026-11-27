@@ -19,18 +19,6 @@ header{
  text-align:center;
  border-bottom:1px solid #cbbba6;
 }
-.logo{
- font-family:Georgia,serif;
- font-size:30px;
- font-weight:bold;
- letter-spacing:5px;
-}
-.logo small{
- display:block;
- font-size:12px;
- letter-spacing:6px;
- margin-top:5px;
-}
 .hero{
  padding:55px 20px;
  text-align:center;
@@ -60,7 +48,9 @@ p{line-height:1.6}
  padding:16px 25px;
  text-decoration:none;
  border:0;
+ border-radius:12px;
  letter-spacing:2px;
+ cursor:pointer;
 }
 section{
  max-width:600px;
@@ -92,7 +82,7 @@ input,select{
  background:#fffdf9;
  font-size:16px;
  color:#211e1a;
- border-radius:0;
+ border-radius:8px;
 }
 #horas{
  display:grid;
@@ -104,13 +94,18 @@ input,select{
  padding:14px 5px;
  border:1px solid #bca88e;
  background:#fffdf9;
+ color:#59382f;
+ border-radius:16px;
  font-size:14px;
+ -webkit-appearance:none;
+ cursor:pointer;
 }
 .hora.selected{
- background:#211e1a;
+ background:#8b6848;
  color:white;
+ border-color:#8b6848;
 }
-#estado{
+#estado,#mensaje{
  font-size:13px;
  color:#8b6848;
 }
@@ -131,18 +126,20 @@ footer{
 <body>
 
 <header>
-
 <img src="./logo-mrbarber.png"
-     alt="MRBARBER 1996"
-     style="width:260px; max-width:90%; height:auto; display:block; margin:0 auto;">
-
-
+ alt="MRBARBER 1996"
+ style="width:260px;max-width:90%;height:auto;display:block;margin:0 auto;">
+</header>
 
 <div class="hero">
-<div class="eyebrow">ESTILO · IDENTIDAD · EXPERIENCIA</div>
+<div class="eyebrow">
+ESTILO · IDENTIDAD · EXPERIENCIA
+</div>
 <h1>Tu estilo habla<br>por ti.</h1>
 <p>Más que un corte, una experiencia.</p>
-<a class="btn" href="#reservar">RESERVAR MI HORA</a>
+<a class="btn" href="#reservar">
+RESERVAR MI HORA
+</a>
 </div>
 
 <section>
@@ -164,46 +161,57 @@ footer{
 <section id="reservar">
 <h2>Reserva tu hora</h2>
 
-<label>SERVICIO</label>
-<select id="servicio">
+<form id="formReserva">
+
+<label for="servicio">SERVICIO</label>
+<select id="servicio" required>
 <option value="">Cargando servicios...</option>
 </select>
 
-<label>BARBERO</label>
+<label for="barbero">BARBERO</label>
 <select id="barbero">
 <option value="">Cualquier barbero disponible</option>
 </select>
 
-<label>FECHA</label>
-<input type="date" id="fecha">
+<label for="fecha">FECHA</label>
+<input type="date" id="fecha" required>
 
 <label>HORAS DISPONIBLES</label>
-<p id="estado" aria-live="polite">Selecciona un servicio y una fecha.</p>
+<p id="estado" aria-live="polite">
+Selecciona un servicio y una fecha.
+</p>
 <div id="horas"></div>
 
-<label>TU NOMBRE</label>
+<label for="nombre">TU NOMBRE</label>
 <input type="text" id="nombre"
-placeholder="Nombre y apellido">
+ placeholder="Nombre y apellido"
+ autocomplete="name" required>
 
-<label>WHATSAPP</label>
+<label for="telefono">WHATSAPP</label>
 <input type="tel" id="telefono"
-placeholder="+56 9">
+ placeholder="+56 9"
+ autocomplete="tel" required>
 
-<label>CORREO ELECTRÓNICO</label>
+<label for="correo">CORREO ELECTRÓNICO</label>
 <input type="email" id="correo"
-placeholder="Tu correo">
+ placeholder="Tu correo"
+ autocomplete="email" required>
 
 <br><br>
 
-<button class="btn" style="width:100%" disabled>
+<button id="confirmar" class="btn"
+ type="submit" style="width:100%" disabled>
 CONFIRMAR RESERVA
 </button>
 
+<p id="mensaje" aria-live="polite"></p>
+
 <p style="font-size:12px;color:#8b6848">
-Agenda en fase de prueba.
-Las reservas todavía no están habilitadas.
+Agenda en fase de prueba. Los datos ingresados
+se utilizan para gestionar tu reserva.
 </p>
 
+</form>
 </section>
 
 <footer>
@@ -218,7 +226,8 @@ Sábado: 09:00 – 18:00</p>
 
 import {
  cargarServicios,
- cargarHoras
+ cargarHoras,
+ crearReserva
 } from './agenda.js';
 
 const servicio = document.getElementById('servicio');
@@ -226,6 +235,16 @@ const barbero = document.getElementById('barbero');
 const fecha = document.getElementById('fecha');
 const horas = document.getElementById('horas');
 const estado = document.getElementById('estado');
+const nombre = document.getElementById('nombre');
+const telefono = document.getElementById('telefono');
+const correo = document.getElementById('correo');
+const confirmar = document.getElementById('confirmar');
+const mensaje = document.getElementById('mensaje');
+const formulario = document.getElementById('formReserva');
+
+let horaElegida = null;
+let solicitud = 0;
+let guardando = false;
 
 const formatoFecha = new Intl.DateTimeFormat(
  'en-CA',
@@ -254,7 +273,15 @@ const limite = new Date(
 limite.setUTCDate(limite.getUTCDate()+30);
 fecha.max = fechaChile(limite);
 
-let solicitud = 0;
+function validar(){
+ confirmar.disabled =
+  guardando ||
+  !horaElegida ||
+  !nombre.value.trim() ||
+  telefono.value.replace(/\D/g,'').length < 9 ||
+  !correo.value.trim() ||
+  !formulario.checkValidity();
+}
 
 async function iniciar(){
  try{
@@ -271,10 +298,10 @@ async function iniciar(){
    servicio.appendChild(opcion);
   });
 
-  ['Maikol','Javier','Luis'].forEach(nombre=>{
+  ['Maikol','Javier','Luis'].forEach(n=>{
    const opcion = document.createElement('option');
-   opcion.value = nombre;
-   opcion.textContent = nombre;
+   opcion.value = n;
+   opcion.textContent = n;
    barbero.appendChild(opcion);
   });
 
@@ -287,11 +314,15 @@ async function iniciar(){
 async function actualizarHoras(){
 
  const actual = ++solicitud;
- horas.innerHTML = '';
 
- if(!servicio.value || !fecha.value){
+ horaElegida = null;
+ horas.innerHTML = '';
+ validar();
+
+ if(!servicio.value || !fecha.value ||
+    !fecha.checkValidity()){
   estado.textContent =
-   'Selecciona un servicio y una fecha.';
+   'Selecciona un servicio y una fecha válida.';
   return;
  }
 
@@ -329,10 +360,20 @@ async function actualizarHoras(){
    boton.textContent = h.hora_local;
 
    boton.onclick = ()=>{
+    if(guardando) return;
+
     document.querySelectorAll('.hora')
      .forEach(b=>b.classList.remove('selected'));
 
     boton.classList.add('selected');
+    horaElegida = h;
+
+    estado.textContent =
+     'Hora seleccionada: ' +
+     h.hora_local + ' · ' + h.barber_name;
+
+    mensaje.textContent = '';
+    validar();
    };
 
    horas.appendChild(boton);
@@ -345,29 +386,86 @@ async function actualizarHoras(){
  }
 }
 
-servicio.addEventListener('change',actualizarHoras);
-barbero.addEventListener('change',actualizarHoras);
-fecha.addEventListener('change',actualizarHoras);
+formulario.addEventListener('submit',async e=>{
+
+ e.preventDefault();
+
+ if(guardando || !horaElegida ||
+    !formulario.checkValidity() ||
+    telefono.value.replace(/\D/g,'').length < 9 ||
+    !nombre.value.trim()) return;
+
+ const elegida = horaElegida;
+
+ guardando = true;
+ confirmar.disabled = true;
+ confirmar.textContent = 'GUARDANDO RESERVA...';
+ mensaje.textContent = '';
+
+ const campos = [
+  servicio,barbero,fecha,nombre,telefono,correo
+ ];
+
+ campos.forEach(c=>c.disabled=true);
+
+ try{
+
+  const reserva = await crearReserva(
+   servicio.value,
+   elegida.barber_id,
+   elegida.slot_start,
+   nombre.value.trim(),
+   telefono.value.trim(),
+   correo.value.trim()
+  );
+
+  if(!reserva){
+   throw new Error('No se recibió confirmación.');
+  }
+
+  mensaje.textContent =
+   '¡Reserva registrada! ' +
+   fecha.value + ' a las ' +
+   elegida.hora_local +
+   ' con ' + elegida.barber_name + '.';
+
+  nombre.value = '';
+  telefono.value = '';
+  correo.value = '';
+
+ }catch(e){
+
+  mensaje.textContent =
+   'No pudimos confirmar la reserva: ' +
+   e.message;
+
+ }finally{
+
+  campos.forEach(c=>c.disabled=false);
+
+  guardando = false;
+  confirmar.textContent = 'CONFIRMAR RESERVA';
+
+  await actualizarHoras();
+  validar();
+ }
+
+});
+
+[servicio,barbero,fecha].forEach(c=>{
+ c.addEventListener('change',()=>{
+  mensaje.textContent='';
+  actualizarHoras();
+ });
+});
+
+[nombre,telefono,correo].forEach(c=>{
+ c.addEventListener('input',validar);
+});
 
 iniciar();
 
 </script>
-
-
-<style>
-.hora {
-  border-radius: 16px !important;
-  color: #59382F !important;
-  background: #FFFDF9 !important;
-  border: 1px solid #BCA88E !important;
-  -webkit-appearance: none;
-}
-.hora.selected {
-  background: #8B6848 !important;
-  color: #FFFFFF !important;
-  border-color: #8B6848 !important;
-}
-</style>
 
 </body>
 </html>
