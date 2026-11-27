@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Panel privado | MRBARBER</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ background:#f5efe6;
+ color:#211e1a;
+ font-family:Arial,sans-serif;
+}
+
+header{
+ text-align:center;
+ padding:25px;
+ border-bottom:1px solid #cbbba6;
+}
+
+.logo{
+ width:210px;
+ max-width:90%;
+}
+
+main{
+ max-width:1000px;
+ margin:auto;
+ padding:20px;
+}
+
+h1,h2{
+ font-family:Georgia,serif;
+ font-weight:normal;
+ color:#59382f;
+}
+
+.subtitulo{
+ font-size:12px;
+ letter-spacing:2px;
+ color:#8b6848;
+}
+
+.resumen{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:12px;
+ margin:25px 0;
+}
+
+.tarjeta{
+ background:#fffdf9;
+ border:1px solid #d8cbbb;
+ border-radius:12px;
+ padding:20px;
+}
+
+.numero{
+ font-size:28px;
+ font-weight:bold;
+ color:#59382f;
+ margin-top:10px;
+}
+
+label{
+ display:block;
+ font-size:12px;
+ font-weight:bold;
+ margin:15px 0 8px;
+}
+
+input,select{
+ width:100%;
+ padding:14px;
+ font-size:16px;
+ border:1px solid #cbbba6;
+ border-radius:8px;
+ background:#fffdf9;
+}
+
+button{
+ padding:13px 18px;
+ border:0;
+ border-radius:8px;
+ background:#211e1a;
+ color:white;
+ cursor:pointer;
+}
+
+button:disabled{
+ opacity:.5;
+}
+
+.cita{
+ background:#fffdf9;
+ border:1px solid #d8cbbb;
+ border-left:5px solid #8b6848;
+ border-radius:10px;
+ padding:18px;
+ margin-bottom:12px;
+}
+
+.hora{
+ font-size:23px;
+ font-weight:bold;
+ color:#59382f;
+}
+
+.etiqueta{
+ font-size:11px;
+ color:#795333;
+ background:#eee0d1;
+ border-radius:20px;
+ padding:6px 10px;
+ display:inline-block;
+}
+
+p{
+ line-height:1.5;
+}
+
+#mensaje{
+ color:#8b6848;
+ font-size:14px;
+}
+
+[hidden]{
+ display:none!important;
+}
+
+footer{
+ text-align:center;
+ padding:30px;
+ color:#8b6848;
+ font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="./logo-mrbarber.png"
+ class="logo" alt="MRBARBER">
+
+<p class="subtitulo">
+GESTIÓN PRIVADA
+</p>
+
+<button id="salir">
+Cerrar sesión
+</button>
+</header>
+
+<main id="contenido" hidden>
+
+<h1 id="bienvenida">Bienvenido</h1>
+<p id="rol"></p>
+
+<div class="resumen">
+
+<div class="tarjeta">
+Citas activas
+<div class="numero" id="totalCitas">0</div>
+</div>
+
+<div class="tarjeta" id="tarjetaIngresos" hidden>
+Valor de reservas
+<div class="numero" id="ingresos">$0</div>
+</div>
+
+</div>
+
+<h2>Agenda diaria</h2>
+
+<label for="fecha">FECHA</label>
+<input type="date" id="fecha">
+
+<div id="filtroBarbero" hidden>
+
+<label for="barbero">BARBERO</label>
+
+<select id="barbero">
+<option value="">Todos los barberos</option>
+</select>
+
+</div>
+
+<p id="mensaje" role="status"></p>
+
+<div id="citas"></div>
+
+</main>
+
+<p id="acceso" style="text-align:center">
+Comprobando acceso...
+</p>
+
+<footer>
+MRBARBER 1996 · Sistema de gestión
+</footer>
+
+<script type="module">
+
+import { createClient } from
+'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/+esm';
+
+const supabase = createClient(
+ 'https://jkcfcfkfrhbstdsogfcf.supabase.co',
+ 'sb_publishable_62E1s1mOWelEuP4LMGjhjw_PTF7nrYX'
+);
+
+const el = id => document.getElementById(id);
+
+let administrador = false;
+let perfil = null;
+let equipo = [];
+let servicios = [];
+let solicitud = 0;
+
+const moneda = new Intl.NumberFormat('es-CL',{
+ style:'currency',
+ currency:'CLP'
+});
+
+function fechaChile(d){
+
+ const partes = new Intl.DateTimeFormat('en-CA',{
+  timeZone:'America/Santiago',
+  year:'numeric',
+  month:'2-digit',
+  day:'2-digit'
+ }).formatToParts(d);
+
+ const p = Object.fromEntries(
+  partes.map(x=>[x.type,x.value])
+ );
+
+ return `${p.year}-${p.month}-${p.day}`;
+}
+
+function horaChile(d){
+
+ return new Date(d).toLocaleTimeString('es-CL',{
+  timeZone:'America/Santiago',
+  hour:'2-digit',
+  minute:'2-digit',
+  hour12:false
+ });
+
+}
+
+async function iniciar(){
+
+ try{
+
+  const {data,error} = await supabase.auth.getUser();
+
+  if(error || !data.user){
+
+   location.replace('./login.html');
+   return;
+
+  }
+
+  const usuario = data.user;
+
+  const resultadoAdmin =
+   await supabase.rpc('is_admin');
+
+  if(resultadoAdmin.error){
+   throw resultadoAdmin.error;
+  }
+
+  administrador = resultadoAdmin.data === true;
+
+  const resultadoEquipo = await supabase
+   .from('barbers')
+   .select('id,name,user_id,active')
+   .eq('active',true);
+
+  if(resultadoEquipo.error){
+   throw resultadoEquipo.error;
+  }
+
+  equipo = resultadoEquipo.data;
+
+  perfil = equipo.find(
+   b=>b.user_id === usuario.id
+  );
+
+  if(!administrador && !perfil){
+
+   el('acceso').textContent =
+    'Esta cuenta no tiene acceso al equipo MRBARBER.';
+
+   return;
+
+  }
+
+  const resultadoServicios = await supabase
+   .from('services')
+   .select('id,name,price');
+
+  if(resultadoServicios.error){
+   throw resultadoServicios.error;
+  }
+
+  servicios = resultadoServicios.data;
+
+  el('bienvenida').textContent =
+   'Bienvenido, ' +
+   (perfil?.name || 'Administrador');
+
+  el('rol').textContent = administrador
+   ? 'Administrador MRBARBER'
+   : 'Panel personal de barbero';
+
+  el('tarjetaIngresos').hidden =
+   !administrador;
+
+  el('filtroBarbero').hidden =
+   !administrador;
+
+  if(administrador){
+
+   equipo.forEach(b=>{
+
+    const opcion =
+     document.createElement('option');
+
+    opcion.value = b.id;
+    opcion.textContent = b.name;
+
+    el('barbero').appendChild(opcion);
+
+   });
+
+  }
+
+  el('fecha').value = fechaChile(new Date());
+
+  el('acceso').hidden = true;
+  el('contenido').hidden = false;
+
+  await cargarCitas();
+
+ }catch(error){
+
+  el('acceso').textContent =
+   'No pudimos comprobar tu acceso. ' +
+   error.message;
+
+ }
+
+}
+
+async function cargarCitas(){
+
+ const actual = ++solicitud;
+
+ el('mensaje').textContent =
+  'Cargando agenda...';
+
+ el('citas').replaceChildren();
+ el('totalCitas').textContent = '—';
+ el('ingresos').textContent = '—';
+
+ try{
+
+  const fecha = el('fecha').value;
+
+  if(!fecha){
+   el('mensaje').textContent =
+    'Selecciona una fecha.';
+   return;
+  }
+
+  const base = new Date(
+   fecha + 'T00:00:00Z'
+  );
+
+  const desde = new Date(
+   base.getTime()-86400000
+  ).toISOString();
+
+  const hasta = new Date(
+   base.getTime()+172800000
+  ).toISOString();
+
+  let consulta = supabase
+   .from('appointments')
+   .select(`
+    id,
+    barber_id,
+    service_id,
+    customer_name,
+    customer_phone,
+    start_at,
+    end_at,
+    status
+   `)
+   .gte('start_at',desde)
+   .lt('start_at',hasta)
+   .order('start_at');
+
+  if(!administrador){
+
+   consulta = consulta.eq(
+    'barber_id',perfil.id
+   );
+
+  }else if(el('barbero').value){
+
+   consulta = consulta.eq(
+    'barber_id',el('barbero').value
+   );
+
+  }
+
+  const {data,error} = await consulta;
+
+  if(actual !== solicitud) return;
+
+  if(error) throw error;
+
+  const citas = data.filter(
+   c=>fechaChile(new Date(c.start_at))===fecha
+  );
+
+  const activas = citas.filter(
+   c=>['confirmed','pending'].includes(c.status)
+  );
+
+  el('totalCitas').textContent =
+   activas.length;
+
+  if(administrador){
+
+   const total = activas.reduce((s,c)=>{
+
+    const servicio = servicios.find(
+     x=>x.id===c.service_id
+    );
+
+    return s+Number(servicio?.price||0);
+
+   },0);
+
+   el('ingresos').textContent =
+    moneda.format(total);
+
+  }
+
+  el('mensaje').textContent = citas.length
+   ? citas.length + ' reservas registradas.'
+   : 'No hay reservas para esta fecha.';
+
+  citas.forEach(c=>{
+
+   const servicio = servicios.find(
+    s=>s.id===c.service_id
+   );
+
+   const barbero = equipo.find(
+    b=>b.id===c.barber_id
+   );
+
+   const tarjeta =
+    document.createElement('div');
+
+   tarjeta.className = 'cita';
+
+   function agregar(texto,clase){
+
+    const p = document.createElement('p');
+    p.textContent = texto;
+
+    if(clase) p.className = clase;
+
+    tarjeta.appendChild(p);
+
+   }
+
+   agregar(
+    horaChile(c.start_at) + ' – ' +
+    horaChile(c.end_at),
+    'hora'
+   );
+
+   agregar(c.customer_name);
+
+   agregar(
+    servicio?.name || 'Servicio'
+   );
+
+   agregar(
+    'Barbero: ' + (barbero?.name || '—')
+   );
+
+   agregar(
+    'WhatsApp: ' + c.customer_phone
+   );
+
+   const estados = {
+    confirmed:'Confirmada',
+    pending:'Pendiente',
+    cancelled:'Cancelada'
+   };
+
+   agregar(
+    estados[c.status] || c.status,
+    'etiqueta'
+   );
+
+   el('citas').appendChild(tarjeta);
+
+  });
+
+ }catch(error){
+
+  if(actual !== solicitud) return;
+
+  el('mensaje').textContent =
+   'Error al cargar agenda: ' + error.message;
+
+ }
+
+}
+
+el('fecha').addEventListener(
+ 'change',cargarCitas
+);
+
+el('barbero').addEventListener(
+ 'change',cargarCitas
+);
+
+el('salir').addEventListener('click',async()=>{
+
+ const {error} = await supabase.auth.signOut();
+
+ if(error){
+  alert('No se pudo cerrar la sesión.');
+  return;
+ }
+
+ location.replace('./login.html');
+
+});
+
+iniciar();
+
+</script>
+
+</body>
+</html>
