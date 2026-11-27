@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Cancelar reserva | MRBARBER</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f5efe6;
+  color: #211c18;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.contenedor {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+.logo {
+  width: 180px;
+  max-width: 100%;
+  margin-bottom: 25px;
+}
+
+h1 {
+  font-family: Georgia, serif;
+  font-size: 30px;
+}
+
+p {
+  line-height: 1.6;
+  color: #66574b;
+}
+
+button {
+  width: 100%;
+  padding: 17px;
+  border: none;
+  border-radius: 8px;
+  background: #211c18;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+button:disabled {
+  opacity: 0.5;
+}
+
+a {
+  display: block;
+  margin-top: 25px;
+  color: #66574b;
+}
+
+#mensaje {
+  margin-top: 20px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+<img src="logo-mrbarber.png"
+class="logo" alt="MRBARBER">
+
+<h1>Cancelar reserva</h1>
+
+<p id="descripcion">
+Si no puedes asistir a tu cita,
+puedes cancelarla aquí y reservar
+un nuevo horario.
+</p>
+
+<button id="cancelar">
+Confirmar cancelación
+</button>
+
+<p id="mensaje" role="status"></p>
+
+<a href="./index.html">
+Volver a reservar
+</a>
+
+</div>
+
+<script type="module">
+
+import { cancelarReserva } from './agenda.js';
+
+const token = location.hash.slice(1);
+const boton = document.getElementById('cancelar');
+const mensaje = document.getElementById('mensaje');
+
+const valido = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token);
+
+if (!valido) {
+  boton.disabled = true;
+  mensaje.textContent = 'El enlace de cancelación no es válido.';
+}
+
+boton.addEventListener('click', async () => {
+
+  if (!valido) return;
+
+  boton.disabled = true;
+  mensaje.textContent = 'Cancelando reserva...';
+
+  try {
+
+    const resultado = await cancelarReserva(token);
+
+    if (resultado === true) {
+
+      mensaje.textContent =
+        'Tu reserva fue cancelada correctamente. Ya puedes agendar una nueva cita.';
+
+      boton.hidden = true;
+
+      history.replaceState(null, '', location.pathname);
+
+    } else {
+
+      mensaje.textContent =
+        'La reserva ya fue cancelada, comenzó o no está disponible.';
+
+    }
+
+  } catch (error) {
+
+    mensaje.textContent =
+      'No pudimos cancelar tu reserva. Inténtalo nuevamente.';
+
+    boton.disabled = false;
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>
