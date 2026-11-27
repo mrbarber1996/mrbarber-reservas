@@ -60,3 +60,24 @@ export async function cargarHoras(
     })
   }));
 }
+
+export async function crearReserva(
+  servicio,
+  barbero,
+  inicio,
+  nombre,
+  telefono,
+  correo
+) {
+  return consultar('rpc/create_booking', {
+    method: 'POST',
+    body: JSON.stringify({
+      p_service_id: servicio,
+      p_barber_id: barbero,
+      p_start_at: inicio,
+      p_customer_name: nombre.trim(),
+      p_customer_phone: telefono.trim(),
+      p_customer_email: correo.trim()
+    })
+  });
+}
