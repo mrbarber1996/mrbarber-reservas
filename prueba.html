@@ -1,25 +1,35 @@
 
 <!DOCTYPE html>
 <html lang="es">
-<head>
 <meta charset="UTF-8">
-<title>MRBARBER - Conexión</title>
-</head>
-<body>
 <h2>MRBARBER 1996</h2>
 <p id="estado">Comprobando conexión...</p>
 
-<script type="module">
-import { supabase } from './supabase.js';
+<script>
+async function probar() {
+  const estado = document.getElementById('estado');
+  try {
+    const respuesta = await fetch(
+      'https://jkcfcfkfrhbstdsogfcf.supabase.co/rest/v1/services?select=*',
+      {
+        headers: {
+          apikey: 'sb_publishable_62E1s1mOWelEuP4LMGjhjw_PTF7nrYX'
+        },
+        signal: AbortSignal.timeout(15000)
+      }
+    );
+    const datos = await respuesta.json();
 
-const { data, error } = await supabase
-  .from('services')
-  .select('*');
+    if (!respuesta.ok) {
+      throw new Error(JSON.stringify(datos));
+    }
 
-document.getElementById('estado').textContent =
-  error
-  ? 'Error: ' + error.message
-  : 'Conexión correcta. Servicios encontrados: ' + data.length;
+    estado.textContent =
+      'Conexión correcta. Servicios: ' + datos.length;
+  } catch (error) {
+    estado.textContent = 'Error: ' + error.message;
+  }
+}
+probar();
 </script>
-</body>
 </html>
