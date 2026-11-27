@@ -1,0 +1,25 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>MRBARBER - Conexión</title>
+</head>
+<body>
+<h2>MRBARBER 1996</h2>
+<p id="estado">Comprobando conexión...</p>
+
+<script type="module">
+import { supabase } from './supabase.js';
+
+const { data, error } = await supabase
+  .from('services')
+  .select('*');
+
+document.getElementById('estado').textContent =
+  error
+  ? 'Error: ' + error.message
+  : 'Conexión correcta. Servicios encontrados: ' + data.length;
+</script>
+</body>
+</html>
