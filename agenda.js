@@ -69,7 +69,7 @@ export async function crearReserva(
   telefono,
   correo
 ) {
-  return consultar('rpc/create_booking', {
+  return consultar('rpc/book_with_token', {
     method: 'POST',
     body: JSON.stringify({
       p_service_id: servicio,
@@ -78,6 +78,15 @@ export async function crearReserva(
       p_customer_name: nombre.trim(),
       p_customer_phone: telefono.trim(),
       p_customer_email: correo.trim()
+    })
+  });
+}
+
+export async function cancelarReserva(token) {
+  return consultar('rpc/cancel_booking', {
+    method: 'POST',
+    body: JSON.stringify({
+      p_token: token
     })
   });
 }
