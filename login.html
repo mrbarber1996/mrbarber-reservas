@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acceso privado | MRBARBER</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ background:#f5efe6;
+ color:#211e1a;
+ font-family:Arial,sans-serif;
+ min-height:100vh;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:25px;
+}
+
+.contenedor{
+ width:100%;
+ max-width:420px;
+ text-align:center;
+}
+
+.logo{
+ width:230px;
+ max-width:90%;
+ margin-bottom:30px;
+}
+
+.tarjeta{
+ background:#fffdf9;
+ border:1px solid #cbbba6;
+ border-radius:16px;
+ padding:25px;
+}
+
+h1{
+ font-family:Georgia,serif;
+ font-weight:normal;
+ font-size:28px;
+ color:#59382f;
+}
+
+p{
+ color:#8b6848;
+ font-size:14px;
+ line-height:1.6;
+}
+
+label{
+ display:block;
+ text-align:left;
+ font-size:12px;
+ font-weight:bold;
+ letter-spacing:1px;
+ margin:22px 0 8px;
+}
+
+input{
+ width:100%;
+ padding:15px;
+ font-size:16px;
+ border:1px solid #cbbba6;
+ border-radius:8px;
+ background:#fffdf9;
+}
+
+button{
+ width:100%;
+ padding:17px;
+ margin-top:25px;
+ background:#211e1a;
+ color:white;
+ border:0;
+ border-radius:10px;
+ font-size:14px;
+ letter-spacing:2px;
+ cursor:pointer;
+}
+
+button:disabled{
+ opacity:.5;
+}
+
+a{
+ color:#8b6848;
+ font-size:13px;
+}
+
+#mensaje{
+ font-size:13px;
+ color:#8b6848;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+<img src="./logo-mrbarber.png"
+ class="logo" alt="MRBARBER 1996">
+
+<div class="tarjeta">
+
+<h1>Bienvenido al equipo</h1>
+<p>Acceso privado MRBARBER</p>
+
+<form id="login">
+
+<label for="correo">
+CORREO ELECTRÓNICO
+</label>
+
+<input type="email"
+ id="correo"
+ placeholder="Tu correo electrónico"
+ autocomplete="username"
+ required>
+
+<label for="clave">
+CONTRASEÑA
+</label>
+
+<input type="password"
+ id="clave"
+ placeholder="Tu contraseña"
+ autocomplete="current-password"
+ required>
+
+<button type="submit" id="entrar">
+INICIAR SESIÓN
+</button>
+
+<p id="mensaje" role="status"></p>
+
+</form>
+
+<p>Acceso exclusivo para el equipo MRBARBER.</p>
+
+</div>
+
+<p>
+<a href="./index.html">
+Volver a la página principal
+</a>
+</p>
+
+</div>
+
+<script type="module">
+
+import { createClient } from
+'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/+esm';
+
+const supabase = createClient(
+ 'https://jkcfcfkfrhbstdsogfcf.supabase.co',
+ 'sb_publishable_62E1s1mOWelEuP4LMGjhjw_PTF7nrYX'
+);
+
+const formulario = document.getElementById('login');
+const boton = document.getElementById('entrar');
+const mensaje = document.getElementById('mensaje');
+
+formulario.addEventListener('submit',async e=>{
+
+ e.preventDefault();
+
+ boton.disabled = true;
+ boton.textContent = 'INGRESANDO...';
+ mensaje.textContent = '';
+
+ try{
+
+  const { data, error } =
+   await supabase.auth.signInWithPassword({
+
+    email: document.getElementById('correo').value.trim(),
+
+    password: document.getElementById('clave').value
+
+   });
+
+  if(error) throw error;
+
+  document.getElementById('clave').value = '';
+
+  mensaje.textContent =
+   'Inicio de sesión correcto.';
+
+  window.location.href = './panel.html';
+
+ }catch(error){
+
+  mensaje.textContent =
+   'No pudimos iniciar sesión. Revisa tus datos e inténtalo nuevamente.';
+
+ }finally{
+
+  boton.disabled = false;
+  boton.textContent = 'INICIAR SESIÓN';
+
+ }
+
+});
+
+</script>
+
+</body>
+</html>
